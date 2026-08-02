@@ -18,7 +18,9 @@ def send_email(to,cc,subject,body, attachment_bytes=None):
             subtype="vnd.openxmlformats-officedocument.wordprocessingml.document",
             filename="mo_tai_khoan.docx"
         )
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
         server.login(EMAIL_ACCOUNT, APP_PASSWORD)
         server.send_message(msg)
+
     print("Đã gửi email thành công!")
