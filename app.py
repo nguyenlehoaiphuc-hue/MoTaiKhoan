@@ -69,8 +69,6 @@ def scan_ocr():
     elif mode == "company":
         if "image-hkd" not in request.files:
             return jsonify({"success": False, "message": "Thiếu ảnh Giấy chứng nhận đăng ký DN."}), 400
-        if "image-acc-front" not in request.files or "image-acc-back" not in request.files:
-            return jsonify({"success": False, "message": "Thiếu ảnh CCCD kế toán."}), 400
 
         company_image = request.files["image-hkd"]
         company_result = extract_company(company_image.read(), company_image.content_type)
@@ -78,19 +76,32 @@ def scan_ocr():
             return jsonify(company_result)
         result.update(company_result)
 
-        acc_front = request.files["image-acc-front"]
-        acc_back = request.files["image-acc-back"]
-        acc_result = extract_cccd(
-            front_bytes=acc_front.read(),
-            front_mime=acc_front.content_type,
-            back_bytes=acc_back.read(),
-            back_mime=acc_back.content_type
-        )
-        if acc_result.get("success") is False:
-            return jsonify(acc_result)
-        for cccd_key, acc_key in CCCD_TO_ACCOUNTANT_KEY.items():
-            result[acc_key] = acc_result.get(cccd_key)
+        # Ảnh CCCD kế toán không bắt buộc ở bước này — có route riêng
+        # (/scan_accountant) tự chạy khi người dùng tải đủ 2 ảnh.
 
+    return jsonify(result)
+
+
+@app.route("/scan_accountant", methods=["POST"])
+def scan_accountant():
+    """Trích xuất riêng CCCD kế toán — gọi tự động khi đủ 2 ảnh, không cần bấm nút."""
+    if "image-acc-front" not in request.files or "image-acc-back" not in request.files:
+        return jsonify({"success": False, "message": "Thiếu ảnh CCCD kế toán."}), 400
+
+    acc_front = request.files["image-acc-front"]
+    acc_back = request.files["image-acc-back"]
+    acc_result = extract_cccd(
+        front_bytes=acc_front.read(),
+        front_mime=acc_front.content_type,
+        back_bytes=acc_back.read(),
+        back_mime=acc_back.content_type
+    )
+    if acc_result.get("success") is False:
+        return jsonify(acc_result)
+
+    result = {}
+    for cccd_key, acc_key in CCCD_TO_ACCOUNTANT_KEY.items():
+        result[acc_key] = acc_result.get(cccd_key)
     return jsonify(result)
 
 

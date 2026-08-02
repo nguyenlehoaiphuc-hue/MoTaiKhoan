@@ -837,7 +837,6 @@
         localStorage.setItem("motaikhoan-theme", next);
       });
 
-      const ARROW_ICON = '<svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
       const personalErrID = [
         "fullName",
@@ -894,7 +893,7 @@
         if (loading) {
           label.innerHTML = `<span class="spinner"></span> ${loadingLabel}`;
         } else {
-          label.innerHTML = `${idleLabel} ${ARROW_ICON}`;
+          label.textContent = idleLabel;
         }
       }
 
@@ -921,6 +920,34 @@
       setupSlotPreview("hkd", "slot-hkd", "preview-hkd", "inf-img-hkd");
       setupSlotPreview("acc-front", "slot-acc-front", "preview-acc-front", "inf-img-acc-front");
       setupSlotPreview("acc-back", "slot-acc-back", "preview-acc-back", "inf-img-acc-back");
+
+      // --- TỰ ĐỘNG TRÍCH XUẤT CCCD KẾ TOÁN NGAY KHI ĐỦ 2 ẢNH (không cần bấm nút) ---
+      function maybeAutoScanAccountant() {
+        const accFront = document.getElementById("acc-front").files[0];
+        const accBack = document.getElementById("acc-back").files[0];
+        if (!accFront || !accBack) return;
+
+        const formData = new FormData();
+        formData.append("image-acc-front", accFront);
+        formData.append("image-acc-back", accBack);
+
+        showStatus("info", "Đang đọc CCCD kế toán, vui lòng đợi trong giây lát...", true);
+        fetch("/scan_accountant", { method: "POST", body: formData })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success === false) {
+              showStatus("error", "Lỗi đọc CCCD kế toán: " + data.message);
+            } else {
+              showInformCustomer(data);
+              showStatus("success", "Đã trích xuất xong thông tin kế toán.");
+            }
+          })
+          .catch(() => {
+            showStatus("error", "Không kết nối được tới máy chủ, thử lại sau.");
+          });
+      }
+      document.getElementById("acc-front").addEventListener("change", maybeAutoScanAccountant);
+      document.getElementById("acc-back").addEventListener("change", maybeAutoScanAccountant);
 
       // --- CHUYỂN ĐỔI CHẾ ĐỘ: CÁ NHÂN / HỘ KINH DOANH / CÔNG TY ---
       const modePersonalBtn = document.getElementById("mode-personal");
@@ -1076,14 +1103,8 @@
           return;
         }
         const imgHkd = document.getElementById("hkd").files[0];
-        const imgAccFront = document.getElementById("acc-front").files[0];
-        const imgAccBack = document.getElementById("acc-back").files[0];
         if (currentMode !== "personal" && !imgHkd) {
           showStatus("error", "Vui lòng tải ảnh giấy tờ kinh doanh/công ty.");
-          return;
-        }
-        if (currentMode === "company" && (!imgAccFront || !imgAccBack)) {
-          showStatus("error", "Vui lòng tải đủ ảnh CCCD kế toán.");
           return;
         }
 
@@ -1092,8 +1113,6 @@
         formData.append("image-front", imgFront);
         formData.append("image-back", imgBack);
         if (imgHkd) formData.append("image-hkd", imgHkd);
-        if (imgAccFront) formData.append("image-acc-front", imgAccFront);
-        if (imgAccBack) formData.append("image-acc-back", imgAccBack);
 
         setButtonLoading(btnExtract, true, "Đang trích xuất...", "Trích xuất thông tin");
         showStatus("info", "Đang đọc thông tin từ ảnh, vui lòng đợi trong giây lát...", true);
@@ -1156,6 +1175,7 @@
       // --- BẤM "LƯU THÔNG TIN" ---
       const btnSave = document.getElementById("btn-save");
       btnSave.addEventListener("click", async () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
         if (!validationForm(getRequiredFields())) {
           showStatus("error", "Vui lòng điền đầy đủ các trường bắt buộc.");
           return;
