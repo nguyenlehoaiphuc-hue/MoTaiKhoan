@@ -3,398 +3,1171 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trích Xuất & Quản Lý Thông Tin CCCD</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="color-scheme" content="light dark" />
+    <title>Mở tài khoản nhanh — Trích xuất CCCD</title>
 
     <style>
-      body {
-        font-family: "Inter", sans-serif;
+      :root {
+        --ink: #0f2436;
+        --ink-muted: #56708a;
+        --surface: #eef7fc;
+        --surface-2: #d2e8f7;
+        --sky: #0b7fc9;
+        --sky-deep: #085d94;
+        --sky-soft: #e1f1fc;
+        --line: #d9ecf8;
+        --success: #1e8a5f;
+        --success-soft: #e0f0e8;
+        --alert: #c23b4f;
+        --alert-soft: #fbe3e7;
+        --cta-bg: #0f2436;
+        --cta-text: #ffffff;
+        --body-bg:
+          linear-gradient(to right, #74b5e2 0%, rgba(116, 181, 226, 0) 45%),
+          linear-gradient(to left, #74b5e2 0%, rgba(116, 181, 226, 0) 45%),
+          #d5e9f7;
+        --shadow: 0 1px 2px rgba(15, 36, 54, 0.05), 0 16px 40px rgba(15, 36, 54, 0.07);
       }
+      :root[data-theme="dark"] {
+        --ink: #eaf3fb;
+        --ink-muted: #8fa8bd;
+        --surface: #122130;
+        --surface-2: #16283a;
+        --sky: #4fb1ef;
+        --sky-deep: #7cc8f5;
+        --sky-soft: #163044;
+        --line: #1f3547;
+        --cta-bg: #4fb1ef;
+        --cta-text: #062434;
+        --body-bg: linear-gradient(180deg, #0a1620 0%, #0d1d29 55%);
+        --success: #4fbe8c;
+        --success-soft: #133226;
+        --alert: #e2707f;
+        --alert-soft: #351f26;
+        --shadow: 0 1px 2px rgba(0,0,0,.4), 0 16px 40px rgba(0,0,0,.45);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--body-bg);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        padding: 3rem 1.25rem 4rem;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+      h1 {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        text-wrap: balance;
+        margin: 0;
+      }
+      h2 {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-weight: 700;
+        margin: 0;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; }
+      }
+      a:focus-visible, button:focus-visible, input:focus-visible, label:focus-within {
+        outline: 2px solid var(--sky);
+        outline-offset: 2px;
+      }
+
+      .page { max-width: 660px; margin: 0 auto; position: relative; }
+
+      .theme-toggle {
+        position: absolute;
+        top: 0.2rem;
+        right: 0;
+        width: 2.3rem;
+        height: 2.3rem;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--sky-deep);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .theme-toggle:hover { border-color: var(--sky); }
+      .theme-toggle .sun { display: none; }
+      :root[data-theme="dark"] .theme-toggle .moon { display: none; }
+      :root[data-theme="dark"] .theme-toggle .sun { display: block; }
+
+      .masthead { text-align: center; margin-bottom: 3rem; }
+      .eyebrow {
+        display: block;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        color: var(--ink-muted);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
+      .eyebrow b { color: var(--sky-deep); font-weight: 700; }
+      .masthead h1 {
+        font-size: clamp(1.6rem, 5vw, 1.9rem);
+        line-height: 1.25;
+      }
+      .masthead p {
+        color: var(--ink-muted);
+        font-size: 0.98rem;
+        margin: 1.3rem auto 0;
+        max-width: 42ch;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 1.8rem;
+        margin-bottom: 1.4rem;
+      }
+      .stage-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.3rem; }
+      .stage-num {
+        flex-shrink: 0;
+        width: 1.8rem;
+        height: 1.8rem;
+        border-radius: 50%;
+        background: var(--sky-soft);
+        color: var(--sky-deep);
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .stage-head h2 { font-size: 1.15rem; }
+      .stage-head .hint { margin-left: auto; font-size: 0.76rem; color: var(--ink-muted); }
+      .section-label {
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--sky-deep);
+        margin: 0 0 0.9rem;
+      }
+
+      .slots { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+      .slots.mode-business, .slots.mode-company { grid-template-columns: 1fr 1fr 1fr; }
+      @media (max-width: 560px) {
+        .slots, .slots.mode-business, .slots.mode-company { grid-template-columns: 1fr; }
+      }
+
+      .mode-switch {
+        display: inline-flex;
+        background: var(--surface-2);
+        border-radius: 999px;
+        padding: 0.25rem;
+        margin-bottom: 1.3rem;
+        gap: 0.2rem;
+      }
+      .mode-switch button {
+        appearance: none;
+        border: none;
+        background: transparent;
+        color: var(--ink-muted);
+        font-size: 0.82rem;
+        font-weight: 600;
+        padding: 0.55rem 1.1rem;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease;
+      }
+      .mode-switch button.active {
+        background: var(--cta-bg);
+        color: var(--cta-text);
+      }
+
+      .link-toggle {
+        appearance: none;
+        border: none;
+        background: transparent;
+        color: var(--sky-deep);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0;
+      }
+      .link-toggle:hover { text-decoration: underline; }
+      .link-toggle .rotate { transition: transform 0.15s ease; }
+
+      .member-row {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.9rem;
+        background: var(--surface);
+      }
+      .member-row .remove-member {
+        position: absolute;
+        top: 0.6rem;
+        right: 0.6rem;
+        width: 1.6rem;
+        height: 1.6rem;
+        border-radius: 50%;
+        border: none;
+        background: var(--surface);
+        color: var(--alert);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .member-row .remove-member:hover { background: var(--alert-soft); }
+      .member-empty {
+        font-size: 0.85rem;
+        color: var(--ink-muted);
+        margin: 0 0 0.9rem;
+      }
+      .slot {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        height: 9.5rem;
+        border: 1.5px dashed var(--line);
+        border-radius: 16px;
+        cursor: pointer;
+        overflow: hidden;
+        background: var(--surface-2);
+        transition: border-color 0.15s ease;
+      }
+      .slot:hover { border-color: var(--sky); }
+      .slot input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+      .slot .icon { color: var(--ink-muted); }
+      .slot .label { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+      .slot .sub { font-size: 0.7rem; color: var(--ink-muted); }
+      .slot.has-file { border-style: solid; border-color: var(--sky); }
+      .slot .preview {
+        position: absolute;
+        inset: 0;
+        display: none;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+      .slot.has-file .preview { display: block; }
+      .slot.has-file .placeholder { display: none; }
+      .slot .badge {
+        display: none;
+        position: absolute;
+        top: 0.4rem;
+        right: 0.4rem;
+        width: 1.4rem;
+        height: 1.4rem;
+        border-radius: 50%;
+        background: var(--sky);
+        color: #fff;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow);
+      }
+      .slot.has-file .badge { display: flex; }
+      .slot .filename {
+        display: none;
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        background: linear-gradient(to top, rgba(0,0,0,.65), transparent);
+        color: #fff;
+        font-size: 0.68rem;
+        padding: 0.9rem 0.5rem 0.35rem;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .slot.has-file .filename { display: block; }
+
+      .btn {
+        appearance: none;
+        border: none;
+        border-radius: 999px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.9rem 1.4rem;
+        transition: transform 0.08s ease, opacity 0.15s ease, background-color 0.15s ease;
+      }
+      .btn:active:not(:disabled) { transform: scale(0.98); }
+      .btn:disabled { opacity: 0.6; cursor: default; }
+      .btn-primary { background: var(--cta-bg); color: var(--cta-text); width: 100%; margin-top: 1.2rem; }
+      .btn-primary:hover:not(:disabled) { filter: brightness(0.92); }
+      .btn-ghost { background: transparent; color: var(--ink-muted); border: 1px solid var(--line); }
+      .btn-ghost:hover:not(:disabled) { border-color: var(--sky); color: var(--sky-deep); }
+      .btn .arrow { transition: transform 0.15s ease; }
+      .btn:hover:not(:disabled) .arrow { transform: translateX(3px); }
+
+      .spinner {
+        width: 1rem; height: 1rem;
+        border: 2px solid rgba(255,255,255,0.35);
+        border-top-color: currentColor;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      #status {
+        display: none;
+        align-items: center;
+        gap: 0.6rem;
+        border-radius: 14px;
+        padding: 0.8rem 1.1rem;
+        font-size: 0.85rem;
+        margin-bottom: 1.4rem;
+        border: 1px solid var(--line);
+      }
+      #status.show { display: flex; animation: rise 0.2s ease; }
+      #status.info { background: var(--surface); color: var(--ink-muted); }
+      #status.success { background: var(--success-soft); color: var(--success); border-color: var(--success); }
+      #status.error { background: var(--alert-soft); color: var(--alert); border-color: var(--alert); }
+      @keyframes rise { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+      .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+      .fields.single { grid-template-columns: 1fr; }
+      @media (max-width: 420px) { .fields { grid-template-columns: 1fr; } }
+      .field { display: flex; flex-direction: column; gap: 0.4rem; }
+      .field label {
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--sky-deep);
+      }
+      .field label .req { color: var(--alert); margin-left: 0.15rem; }
+      .field input {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 0.65rem 0.8rem;
+        font-size: 0.94rem;
+        color: var(--ink);
+        background: var(--surface-2);
+        outline: none;
+        transition: border-color 0.15s ease, background-color 0.6s ease;
+      }
+      .field input:focus { border-color: var(--sky); background: var(--surface); }
+      .field .err { display: none; font-size: 0.72rem; color: var(--alert); }
+      .field .err.show { display: block; }
+      .field input.just-filled { animation: filled 1.1s ease; }
+      @keyframes filled {
+        0% { background-color: var(--sky-soft); }
+        100% { background-color: var(--surface-2); }
+      }
+
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.6rem;
+        margin-top: 1.3rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid var(--line);
+      }
+      .actions .btn-primary { width: auto; margin-top: 0; padding-inline: 1.8rem; }
     </style>
   </head>
-  <body class="bg-slate-100 py-8">
-    <div class="max-w-3xl w-full mx-auto bg-white rounded-2xl py-8 px-8">
-      <div class="flex flex-col space-y-4 text-center mb-8">
-        <i class="fa-solid fa-address-card text-2xl"></i>
-        <h1 class="text-2xl font-bold">Thông Tin Căn Cước Công Dân</h1>
-        <span class="text-sm"
-          >Tải lên ảnh mặt trước & mặt sau CCCD để tự động trích xuất thông tin
-          qua
-        </span>
-        <span class="text-sm">
-          <b>Gemini API</b> hoặc nhập dữ liệu thủ công.</span
-        >
+  <body>
+    <div class="page">
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Đổi giao diện sáng/tối">
+        <svg class="moon" width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <svg class="sun" width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.3M12 19.2v2.3M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.3M19.2 12h2.3M4.4 19.6L6 18M18 6l1.6-1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+
+      <header class="masthead">
+        <span class="eyebrow">Mở tài khoản <b>chỉ trong vài phút</b></span>
+        <h1>Quét CCCD, gửi hồ sơ ngay</h1>
+        <p>Tải ảnh mặt trước &amp; mặt sau CCCD — hệ thống tự đọc thông tin, bạn chỉ cần kiểm tra lại trước khi gửi.</p>
+      </header>
+
+      <div id="status" role="status" aria-live="polite">
+        <span class="spinner" id="status-spinner"></span>
+        <span id="status-text"></span>
       </div>
-      <hr />
-      <div
-        class="mt-4 bg-slate-100 border border-slate-50/50 border-2 border-dashed rounded-2xl hover:border-blue-400 p-4"
-      >
-        <div class="flex justify-between">
-          <h1>
-            <i class="fa-solid fa-wand-magic-sparkles text-purple-600 mr-2"></i>
-            Import Ảnh CCCD (Mặt Trước & Mặt Sau)
-          </h1>
-          <span
-            class="bg-purple-100 text-purple-600 font-bold rounded-2xl py-1 px-4"
-            >AI OCR</span
-          >
+
+      <section class="card">
+        <div class="mode-switch" role="tablist" aria-label="Loại khách hàng">
+          <button type="button" class="active" id="mode-personal" data-mode="personal">Cá nhân</button>
+          <button type="button" id="mode-business" data-mode="business">Hộ kinh doanh</button>
+          <button type="button" id="mode-company" data-mode="company">Công ty</button>
         </div>
-        <div class="w-full flex flex-col gap-4 mt-4">
-          <div class="flex gap-2">
-            <label
-              class="group relative cursor-pointer flex flex-col w-1/2 bg-white items-center justify-center border border-slate-200 rounded-2xl h-40 hover:border-blue-400"
-            >
-              <div class="text-center space-y-2 overflow-hidden">
-                <div
-                  class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mx-auto group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors"
-                >
-                  <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
-                </div>
-                <p class="text-xs font-semibold text-slate-700">
-                  Mặt trước CCCD
-                </p>
-                <p class="text-[11px] text-slate-400">Bấm để tải ảnh lên</p>
+        <div class="stage-head">
+          <span class="stage-num">1</span>
+          <h2 id="stage1-title">Tải ảnh CCCD</h2>
+        </div>
+        <div class="slots" id="slots">
+          <label class="slot" id="slot-front">
+            <img class="preview" id="preview-front" alt="" />
+            <span class="badge">
+              <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <div class="placeholder">
+              <svg class="icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <p class="label">Mặt trước CCCD</p>
+              <p class="sub">Bấm để chọn ảnh</p>
+            </div>
+            <span class="filename" id="inf-img-front"></span>
+            <input id="front" type="file" accept="image/*" />
+          </label>
+
+          <label class="slot" id="slot-back">
+            <img class="preview" id="preview-back" alt="" />
+            <span class="badge">
+              <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <div class="placeholder">
+              <svg class="icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <p class="label">Mặt sau CCCD</p>
+              <p class="sub">Bấm để chọn ảnh</p>
+            </div>
+            <span class="filename" id="inf-img-back"></span>
+            <input id="back" type="file" accept="image/*" />
+          </label>
+
+          <label class="slot" id="slot-hkd" style="display: none;">
+            <img class="preview" id="preview-hkd" alt="" />
+            <span class="badge">
+              <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <div class="placeholder">
+              <svg class="icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M9 3h6l4 4v14H5V3z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12h6M9 16h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <p class="label" id="slot-bizdoc-label">Giấy chứng nhận HKD</p>
+              <p class="sub">Bấm để chọn ảnh</p>
+            </div>
+            <span class="filename" id="inf-img-hkd"></span>
+            <input id="hkd" type="file" accept="image/*" />
+          </label>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="extract">
+          <span class="btn-label">Trích xuất thông tin</span>
+          <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </section>
+
+      <form id="form-customer">
+        <section class="card" id="business-card" style="display: none;">
+          <div class="stage-head">
+            <span class="stage-num">2</span>
+            <h2>Thông tin hộ kinh doanh</h2>
+          </div>
+
+          <div class="fields single" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="businessName">Tên hộ kinh doanh<span class="req">*</span></label>
+              <input type="text" name="businessName" id="businessName" />
+              <span id="err-businessName" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+          </div>
+
+          <div class="fields" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="bizCode">Mã số hộ kinh doanh<span class="req">*</span></label>
+              <input type="text" name="bizCode" id="bizCode" />
+              <span id="err-bizCode" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+            <div class="field">
+              <label for="regNumber">Mã số đăng ký HKD<span class="req">*</span></label>
+              <input type="text" name="regNumber" id="regNumber" />
+              <span id="err-regNumber" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+          </div>
+
+          <div class="fields" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="regDate">Ngày đăng ký lần đầu<span class="req">*</span></label>
+              <input type="text" name="regDate" id="regDate" />
+              <span id="err-regDate" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+            <div class="field">
+              <label for="bizIssuePlace">Nơi cấp</label>
+              <input type="text" name="bizIssuePlace" id="bizIssuePlace" />
+            </div>
+          </div>
+
+          <div class="fields single" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="businessPhone">Điện thoại HKD</label>
+              <input type="text" name="businessPhone" id="businessPhone" />
+            </div>
+          </div>
+
+          <div class="fields single" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="businessAddress">Địa chỉ trụ sở<span class="req">*</span></label>
+              <input type="text" name="businessAddress" id="businessAddress" />
+              <span id="err-businessAddress" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+          </div>
+
+          <div class="fields" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="industry">Ngành, nghề kinh doanh<span class="req">*</span></label>
+              <input type="text" name="industry" id="industry" />
+              <span id="err-industry" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+            <div class="field">
+              <label for="industryCode">Mã ngành</label>
+              <input type="text" name="industryCode" id="industryCode" />
+            </div>
+          </div>
+
+          <div class="fields">
+            <div class="field">
+              <label for="capital">Vốn kinh doanh (bằng số)<span class="req">*</span></label>
+              <input type="text" name="capital" id="capital" />
+              <span id="err-capital" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+            <div class="field">
+              <label for="capitalText">Vốn kinh doanh (bằng chữ)</label>
+              <input type="text" name="capitalText" id="capitalText" />
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="company-card" style="display: none;">
+          <div class="stage-head">
+            <span class="stage-num">2</span>
+            <h2>Thông tin công ty</h2>
+          </div>
+
+          <div class="fields single" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="companyName">Tên công ty<span class="req">*</span></label>
+              <input type="text" name="companyName" id="companyName" />
+              <span id="err-companyName" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+          </div>
+
+          <div class="fields" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="companyCode">Mã số doanh nghiệp<span class="req">*</span></label>
+              <input type="text" name="companyCode" id="companyCode" />
+              <span id="err-companyCode" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+            <div class="field">
+              <label for="companyRegDate">Ngày đăng ký lần đầu<span class="req">*</span></label>
+              <input type="text" name="companyRegDate" id="companyRegDate" />
+              <span id="err-companyRegDate" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+            <div class="field">
+              <label for="companyIssuePlace">Nơi cấp</label>
+              <input type="text" name="companyIssuePlace" id="companyIssuePlace" />
+            </div>
+          </div>
+
+          <div class="fields single" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="companyAddress">Địa chỉ trụ sở chính<span class="req">*</span></label>
+              <input type="text" name="companyAddress" id="companyAddress" />
+              <span id="err-companyAddress" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+          </div>
+
+          <div class="fields" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="companyPhone">Điện thoại</label>
+              <input type="text" name="companyPhone" id="companyPhone" />
+            </div>
+            <div class="field">
+              <label for="companyEmail">Email</label>
+              <input type="text" name="companyEmail" id="companyEmail" />
+            </div>
+          </div>
+
+          <div class="fields" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="charterCapital">Vốn điều lệ (bằng số)<span class="req">*</span></label>
+              <input type="text" name="charterCapital" id="charterCapital" />
+              <span id="err-charterCapital" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+            <div class="field">
+              <label for="charterCapitalText">Vốn điều lệ (bằng chữ)</label>
+              <input type="text" name="charterCapitalText" id="charterCapitalText" />
+            </div>
+          </div>
+
+          <div class="fields">
+            <div class="field">
+              <label for="shareParValue">Mệnh giá cổ phần</label>
+              <input type="text" name="shareParValue" id="shareParValue" />
+            </div>
+            <div class="field">
+              <label for="totalShares">Tổng số cổ phần</label>
+              <input type="text" name="totalShares" id="totalShares" />
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="stage-head">
+            <span class="stage-num" id="owner-stage-num">2</span>
+            <h2 id="stage2-title">Kiểm tra thông tin</h2>
+            <span class="hint">Sửa lại nếu chưa đúng</span>
+          </div>
+
+          <div id="personal-fields">
+            <div class="fields" style="margin-bottom: 1.1rem;">
+              <div class="field">
+                <label for="fullName">Họ và tên<span class="req">*</span></label>
+                <input type="text" name="fullName" id="fullName" />
+                <span id="err-fullName" class="err">Vui lòng nhập đầy đủ thông tin</span>
               </div>
-              <input id="front" type="file" accept="image/*" class="hidden" />
-              <span
-                id="inf-img-front"
-                class="text-xs font-italic text-green-600"
-              >
+              <div class="field">
+                <label for="dob">Ngày sinh<span class="req">*</span></label>
+                <input type="text" name="dob" id="dob" />
+                <span id="err-dob" class="err">Vui lòng nhập đầy đủ thông tin</span>
+              </div>
+            </div>
+
+            <div class="fields" style="margin-bottom: 1.1rem;">
+              <div class="field">
+                <label for="idCard">Số CCCD<span class="req">*</span></label>
+                <input type="text" name="idCard" id="idCard" />
+                <span id="err-idCard" class="err">Vui lòng nhập đầy đủ thông tin</span>
+              </div>
+              <div class="field">
+                <label for="issueDate">Ngày cấp<span class="req">*</span></label>
+                <input type="text" name="issueDate" id="issueDate" />
+                <span id="err-issueDate" class="err">Vui lòng nhập đầy đủ thông tin</span>
+              </div>
+            </div>
+
+            <div class="fields" style="margin-bottom: 1.1rem;">
+              <div class="field">
+                <label for="issuePlace">Nơi cấp<span class="req">*</span></label>
+                <input type="text" name="issuePlace" id="issuePlace" />
+                <span id="err-issuePlace" class="err">Vui lòng nhập đầy đủ thông tin</span>
+              </div>
+              <div class="field">
+                <label for="expiryDate">Ngày hết hạn<span class="req">*</span></label>
+                <input type="text" name="expiryDate" id="expiryDate" />
+                <span id="err-expiryDate" class="err">Vui lòng nhập đầy đủ thông tin</span>
+              </div>
+            </div>
+
+            <div class="fields single" style="margin-bottom: 1.1rem;">
+              <div class="field">
+                <label for="address">Địa chỉ<span class="req">*</span></label>
+                <input type="text" name="address" id="address" />
+                <span id="err-address" class="err">Vui lòng nhập đầy đủ thông tin</span>
+              </div>
+            </div>
+
+            <div class="fields">
+              <div class="field">
+                <label for="phone">Số điện thoại<span class="req">*</span></label>
+                <input type="text" name="phone" id="phone" />
+                <span id="err-phone" class="err">Vui lòng nhập đầy đủ thông tin</span>
+              </div>
+              <div class="field">
+                <label for="email">Email<span class="req" id="email-req" style="display: none;">*</span></label>
+                <input type="text" name="email" id="email" />
+                <span id="err-email" class="err">Vui lòng nhập đầy đủ thông tin</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="members-card" style="display: none;">
+          <div class="stage-head">
+            <span class="stage-num">4</span>
+            <h2>Thành viên công ty</h2>
+            <span class="hint">Không bắt buộc</span>
+          </div>
+
+          <div id="members-list"></div>
+
+          <button type="button" class="btn btn-ghost" id="add-member-btn" style="width: 100%; justify-content: center; border-style: dashed;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Thêm thành viên
+          </button>
+
+          <input type="hidden" name="companyMembers" id="companyMembers" />
+        </section>
+
+        <section class="card" id="accountant-card" style="display: none;">
+          <div class="stage-head">
+            <span class="stage-num" id="accountant-stage-num">5</span>
+            <h2>Kế toán (người tạo lệnh)</h2>
+            <span class="hint">Bắt buộc với tài khoản công ty</span>
+          </div>
+
+          <div class="slots" style="margin-bottom: 1.3rem;">
+            <label class="slot" id="slot-acc-front">
+              <img class="preview" id="preview-acc-front" alt="" />
+              <span class="badge">
+                <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
+              <div class="placeholder">
+                <svg class="icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <p class="label">CCCD kế toán - mặt trước</p>
+                <p class="sub">Bấm để chọn ảnh</p>
+              </div>
+              <span class="filename" id="inf-img-acc-front"></span>
+              <input id="acc-front" type="file" accept="image/*" />
             </label>
 
-            <label
-              class="flex flex-col w-1/2 bg-white items-center justify-center border border-slate-200 rounded-2xl h-40 hover:border-blue-400 p-4"
-            >
-              <div id="placeholderBack" class="text-center space-y-2">
-                <div
-                  class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mx-auto group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors"
-                >
-                  <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
-                </div>
-                <p class="text-xs font-semibold text-slate-700">Mặt sau CCCD</p>
-                <p class="text-[11px] text-slate-400">Bấm để tải ảnh lên</p>
-              </div>
-              <input id="back" type="file" accept="image/*" class="hidden" />
-              <span
-                id="inf-img-back"
-                class="text-xs font-italic text-green-600"
-              >
+            <label class="slot" id="slot-acc-back">
+              <img class="preview" id="preview-acc-back" alt="" />
+              <span class="badge">
+                <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
+              <div class="placeholder">
+                <svg class="icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <p class="label">CCCD kế toán - mặt sau</p>
+                <p class="sub">Bấm để chọn ảnh</p>
+              </div>
+              <span class="filename" id="inf-img-acc-back"></span>
+              <input id="acc-back" type="file" accept="image/*" />
             </label>
           </div>
-          <div class="flex items-center flex justify-center">
-            <button
-              id="extract"
-              class="w-1/3 bg-purple-600 font-bold text-white text-base items-center flex justify-center gap-2 p-2 rounded-2xl active:scale-95 transition-all"
-            >
-              <i class="fa-solid fa-robot text-base"></i>
-              Trích xuất thông tin
+
+          <div class="fields" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="accName">Họ và tên<span class="req">*</span></label>
+              <input type="text" name="accName" id="accName" />
+              <span id="err-accName" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+            <div class="field">
+              <label for="accDob">Ngày sinh<span class="req">*</span></label>
+              <input type="text" name="accDob" id="accDob" />
+              <span id="err-accDob" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+          </div>
+
+          <div class="fields" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="accIdCard">Số CCCD<span class="req">*</span></label>
+              <input type="text" name="accIdCard" id="accIdCard" />
+              <span id="err-accIdCard" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+            <div class="field">
+              <label for="accIssueDate">Ngày cấp</label>
+              <input type="text" name="accIssueDate" id="accIssueDate" />
+            </div>
+          </div>
+
+          <div class="fields" style="margin-bottom: 1.1rem;">
+            <div class="field">
+              <label for="accIssuePlace">Nơi cấp</label>
+              <input type="text" name="accIssuePlace" id="accIssuePlace" />
+            </div>
+            <div class="field">
+              <label for="accPhone">Số điện thoại<span class="req">*</span></label>
+              <input type="text" name="accPhone" id="accPhone" />
+              <span id="err-accPhone" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+          </div>
+
+          <div class="fields">
+            <div class="field">
+              <label for="accEmail">Email<span class="req">*</span></label>
+              <input type="text" name="accEmail" id="accEmail" />
+              <span id="err-accEmail" class="err">Vui lòng nhập đầy đủ thông tin</span>
+            </div>
+            <div class="field">
+              <label for="accAddress">Địa chỉ</label>
+              <input type="text" name="accAddress" id="accAddress" />
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="actions" style="border-top: none; margin-top: 0; padding-top: 0;">
+            <button type="button" class="btn btn-ghost" id="btn-reset">Làm mới</button>
+            <button type="button" class="btn btn-primary" id="btn-save">
+              <span class="btn-label">Lưu thông tin</span>
+              <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
           </div>
-        </div>
-      </div>
-      <form class="mt-6 space-y-4" id="form-customer">
-        <div class="flex gap-4 w-full">
-          <div class="flex flex-col gap-2 w-1/2">
-            <label
-              for="fullName"
-              class="text-blue-700 uppercase tracking-wider font-bold text-sm"
-            >
-              <i class="fa-solid fa-user text-blue-600 mr-1"></i> Họ và tên
-              <span class="text-rose-500">*</span></label
-            >
-            <input
-              type="text"
-              name="fullName"
-              id="fullName"
-              class="w-full h-10 rounded-lg p-2 border outline-none"
-            />
-            <span id="err-fullName" class="hidden text-red-500 text-xs italic"
-              >Vui lòng nhập đầy đủ thông tin</span
-            >
-          </div>
-          <div class="flex flex-col gap-2 w-1/2">
-            <label
-              for="dob"
-              class="text-blue-700 uppercase tracking-wider font-bold text-sm"
-            >
-              <i class="fa-solid fa-calendar-days text-blue-600 mr-1"></i> Ngày
-              sinh <span class="text-rose-500">*</span></label
-            >
-            <input
-              type="text"
-              name="dob"
-              id="dob"
-              class="w-full h-10 rounded-lg p-2 border outline-none"
-            />
-            <span id="err-dob" class="hidden text-red-500 text-xs italic"
-              >Vui lòng nhập đầy đủ thông tin</span
-            >
-          </div>
-        </div>
-        <div class="flex gap-4 w-full">
-          <div class="flex flex-col gap-2 w-1/2">
-            <label
-              for="idCard"
-              class="text-blue-700 uppercase tracking-wider font-bold text-sm"
-            >
-              <i class="fa-solid fa-id-card text-blue-600 mr-1"></i> CCCD
-              <span class="text-rose-500">*</span></label
-            >
-            <input
-              type="text"
-              name="idCard"
-              id="idCard"
-              class="w-full h-10 rounded-lg p-2 border outline-none"
-            />
-            <span id="err-idCard" class="hidden text-red-500 text-xs italic"
-              >Vui lòng nhập đầy đủ thông tin</span
-            >
-          </div>
-          <div class="flex flex-col gap-2 w-1/2">
-            <label
-              for="issueDate"
-              class="text-blue-700 uppercase tracking-wider font-bold text-sm"
-            >
-              <i class="fa-regular fa-calendar-check text-blue-600 mr-1"></i>
-              Ngày cấp <span class="text-rose-500">*</span></label
-            >
-            <input
-              type="text"
-              name="issueDate"
-              id="issueDate"
-              class="w-full h-10 rounded-lg p-2 border outline-none"
-            />
-            <span id="err-issueDate" class="hidden text-red-500 text-xs italic"
-              >Vui lòng nhập đầy đủ thông tin</span
-            >
-          </div>
-        </div>
-        <div class="flex gap-4 w-full">
-          <div class="flex flex-col gap-2 w-1/2">
-            <label
-              for="issuePlace"
-              class="text-blue-700 uppercase tracking-wider font-bold text-sm"
-            >
-              <i class="fa-solid fa-building-columns text-blue-600 mr-1"></i>
-              Nơi cấp <span class="text-rose-500">*</span></label
-            >
-            <input
-              type="text"
-              name="issuePlace"
-              id="issuePlace"
-              class="w-full h-10 rounded-lg p-2 border outline-none"
-            />
-            <span id="err-issuePlace" class="hidden text-red-500 text-xs italic"
-              >Vui lòng nhập đầy đủ thông tin</span
-            >
-          </div>
-          <div class="flex flex-col gap-2 w-1/2">
-            <label
-              for="expiryDate"
-              class="text-blue-700 uppercase tracking-wider font-bold text-sm"
-            >
-              <i class="fa-solid fa-calendar-xmark text-blue-600"></i> Ngày hết
-              hạn <span class="text-rose-500">*</span></label
-            >
-            <input
-              type="text"
-              name="expiryDate"
-              id="expiryDate"
-              class="w-full h-10 rounded-lg p-2 border outline-none"
-            />
-            <span id="err-expiryDate" class="hidden text-red-500 text-xs italic"
-              >Vui lòng nhập đầy đủ thông tin</span
-            >
-          </div>
-        </div>
-        <div class="flex flex-col gap-2 w-full">
-          <label
-            for="address"
-            class="text-blue-700 uppercase tracking-wider font-bold text-sm"
-          >
-            <i class="fa-solid fa-location-dot text-blue-600 mr-1"></i> Địa chỉ
-            <span class="text-rose-500">*</span></label
-          >
-          <input
-            type="text"
-            name="address"
-            id="address"
-            class="w-full h-10 rounded-lg p-2 border outline-none"
-          />
-          <span id="err-address" class="hidden text-red-500 text-xs italic"
-            >Vui lòng nhập đầy đủ thông tin</span
-          >
-        </div>
-        <div class="flex gap-4 w-full">
-          <div class="flex flex-col gap-2 w-1/2">
-            <label
-              for="phone"
-              class="text-blue-700 uppercase tracking-wider font-bold text-sm"
-            >
-              <i class="fa-solid fa-phone text-blue-600 mr-1"></i>
-              SĐT <span class="text-rose-500">*</span></label
-            >
-            <input
-              type="text"
-              name="phone"
-              id="phone"
-              class="w-full h-10 rounded-lg p-2 border outline-none"
-            />
-            <span id="err-phone" class="hidden text-red-500 text-xs italic"
-              >Vui lòng nhập đầy đủ thông tin</span
-            >
-          </div>
-          <div class="flex flex-col gap-2 w-1/2">
-            <label
-              for="email"
-              class="text-blue-700 uppercase tracking-wider font-bold text-sm"
-            >
-              <i class="fa-solid fa-envelope text-blue-600 mr-1"></i> Email
-            </label>
-            <input
-              type="text"
-              name="email"
-              id="email"
-              class="w-full h-10 rounded-lg p-2 border outline-none"
-            />
-          </div>
-        </div>
+        </section>
       </form>
-      <div
-        class="flex items-center justify-end gap-3 border-t border-slate-100 p-4"
-      >
-        <button
-          type="button"
-          class="rounded-xl px-5 py-3 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 active:scale-95 transition-all"
-          id="btn-reset"
-        >
-          Làm mới
-        </button>
-        <button
-          type="submit"
-          class="flex items-center gap-2 rounded-xl bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-md shadow-blue-200 transition-all hover:bg-blue-700 active:scale-95"
-          id="btn-save"
-        >
-          <i class="fa-solid fa-floppy-disk"></i>
-          <span>Lưu thông tin</span>
-        </button>
-      </div>
     </div>
-  </body>
-  <script>
-    const customer = {
-      fullName: "LÝ PHI HOÀNG",
-      dob: "08/03/2002",
-      idCard: "079202006521",
-      issueDate: "22/11/2021",
-      issuePlace:
-        "Cục trưởng Cục Cảnh sát quản lý hành chính về trật tự xã hội",
-      expiryDate: "08/03/2027",
-      address: "267 Tây Thạnh, Tây Thạnh, Tân Phú, Hồ Chí Minh",
-      phone: null,
-    };
-    const errID = [
-      "fullName",
-      "dob",
-      "idCard",
-      "issueDate",
-      "issuePlace",
-      "expiryDate",
-      "address",
-      "phone",
-    ];
 
-    // HIỂN THỊ ẢNH TẢI THÀNH CÔNG
-    function showInformImgLoaded(id_img, id_inf_img) {
-      const img_input = document.getElementById(id_img);
-      const inf_img = document.getElementById(id_inf_img);
-      img_input.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const nameFile = file.name;
-          inf_img.innerHTML = `Tải thành công ảnh ${nameFile}`;
-        }
-      });
-    }
-    showInformImgLoaded("front", "inf-img-front");
-    showInformImgLoaded("back", "inf-img-back");
-    // GỌI API HIỂN THỊ THÔNG TIN LÊN GIAO DIỆN
-
-    document.getElementById("extract").addEventListener("click", async () => {
-      const imgFront = document.getElementById("front").files[0];
-      const imgBack = document.getElementById("back").files[0];
-      if (!imgFront || !imgBack) {
-        alert("Vui lòng tải đủ ảnh CCCD mặt trước và sau");
-        return;
-      }
-      const formData = new FormData();
-      formData.append("image-front", imgFront);
-      formData.append("image-back", imgBack);
-      const response = await fetch("/scan_ocr", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await response.json();
-      if (data.success === false) {
-        alert("Lỗi: " + data.message);
+    <script>
+      // --- ĐỔI GIAO DIỆN SÁNG / TỐI, NHỚ LỰA CHỌN CHO LẦN SAU ---
+      const rootEl = document.documentElement;
+      const themeToggle = document.getElementById("theme-toggle");
+      const savedTheme = localStorage.getItem("motaikhoan-theme");
+      if (savedTheme) {
+        rootEl.setAttribute("data-theme", savedTheme);
+      } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        rootEl.setAttribute("data-theme", "dark");
       } else {
-        showInformCustomer(data);
+        rootEl.setAttribute("data-theme", "light");
       }
-    });
-
-    function showInformCustomer(data) {
-      Object.entries(data).forEach(([k, v]) => {
-        const elInput = document.getElementById(k);
-        elInput.value = v;
+      themeToggle.addEventListener("click", () => {
+        const next = rootEl.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        rootEl.setAttribute("data-theme", next);
+        localStorage.setItem("motaikhoan-theme", next);
       });
-    }
-    const btnReset = document.getElementById("btn-reset");
-    btnReset.addEventListener("click", () => {
-      const formCustomer = document.getElementById("form-customer");
-      formCustomer.reset();
-    });
-    function validationForm(errID) {
-      let isValid = true;
-      errID.forEach((id) => {
-        const elInput = document.getElementById(id);
-        const errSpan = document.getElementById(`err-${id}`);
-        if (elInput.value === "") {
-          errSpan.classList.remove("hidden");
-          isValid = false;
+
+      const ARROW_ICON = '<svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+      const personalErrID = [
+        "fullName",
+        "dob",
+        "idCard",
+        "issueDate",
+        "issuePlace",
+        "expiryDate",
+        "address",
+        "phone",
+      ];
+      const businessErrID = [
+        "businessName",
+        "bizCode",
+        "regNumber",
+        "regDate",
+        "businessAddress",
+        "industry",
+        "capital",
+      ];
+      const companyErrID = [
+        "companyName",
+        "companyCode",
+        "companyRegDate",
+        "companyAddress",
+        "charterCapital",
+      ];
+      const accountantErrID = ["accName", "accDob", "accIdCard", "accEmail", "accPhone"];
+      function getRequiredFields() {
+        if (currentMode === "business") return personalErrID.concat(businessErrID);
+        if (currentMode === "company") {
+          return personalErrID.concat(["email"]).concat(companyErrID).concat(accountantErrID);
+        }
+        return personalErrID;
+      }
+
+      // --- THANH TRẠNG THÁI (thay cho alert()) ---
+      const statusEl = document.getElementById("status");
+      const statusText = document.getElementById("status-text");
+      const statusSpinner = document.getElementById("status-spinner");
+      function showStatus(type, message, loading = false) {
+        statusEl.className = `show ${type}`;
+        statusText.textContent = message;
+        statusSpinner.style.display = loading ? "inline-block" : "none";
+      }
+      function hideStatus() {
+        statusEl.className = "";
+      }
+
+      // --- BẬT/TẮT TRẠNG THÁI CHỜ TRÊN NÚT ---
+      function setButtonLoading(btn, loading, loadingLabel, idleLabel) {
+        btn.disabled = loading;
+        const label = btn.querySelector(".btn-label");
+        if (loading) {
+          label.innerHTML = `<span class="spinner"></span> ${loadingLabel}`;
         } else {
-          errSpan.classList.add("hidden");
+          label.innerHTML = `${idleLabel} ${ARROW_ICON}`;
+        }
+      }
+
+      // --- XEM TRƯỚC ẢNH CCCD NGAY TRONG Ô TẢI LÊN ---
+      function setupSlotPreview(inputId, slotId, previewId, filenameId) {
+        const input = document.getElementById(inputId);
+        const slot = document.getElementById(slotId);
+        const preview = document.getElementById(previewId);
+        const filenameEl = document.getElementById(filenameId);
+        input.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          filenameEl.textContent = file.name;
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            preview.src = ev.target.result;
+            slot.classList.add("has-file");
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+      setupSlotPreview("front", "slot-front", "preview-front", "inf-img-front");
+      setupSlotPreview("back", "slot-back", "preview-back", "inf-img-back");
+      setupSlotPreview("hkd", "slot-hkd", "preview-hkd", "inf-img-hkd");
+      setupSlotPreview("acc-front", "slot-acc-front", "preview-acc-front", "inf-img-acc-front");
+      setupSlotPreview("acc-back", "slot-acc-back", "preview-acc-back", "inf-img-acc-back");
+
+      // --- CHUYỂN ĐỔI CHẾ ĐỘ: CÁ NHÂN / HỘ KINH DOANH / CÔNG TY ---
+      const modePersonalBtn = document.getElementById("mode-personal");
+      const modeBusinessBtn = document.getElementById("mode-business");
+      const modeCompanyBtn = document.getElementById("mode-company");
+      const slotsEl = document.getElementById("slots");
+      const slotHkd = document.getElementById("slot-hkd");
+      const slotBizdocLabel = document.getElementById("slot-bizdoc-label");
+      const stage1Title = document.getElementById("stage1-title");
+      const stage2Title = document.getElementById("stage2-title");
+      const ownerStageNum = document.getElementById("owner-stage-num");
+      const businessCard = document.getElementById("business-card");
+      const companyCard = document.getElementById("company-card");
+      const membersCard = document.getElementById("members-card");
+      const accountantCard = document.getElementById("accountant-card");
+      const emailReq = document.getElementById("email-req");
+      let currentMode = "personal";
+
+      function setMode(mode) {
+        currentMode = mode;
+        const isBusiness = mode === "business";
+        const isCompany = mode === "company";
+        const needsBizDoc = isBusiness || isCompany;
+
+        modePersonalBtn.classList.toggle("active", mode === "personal");
+        modeBusinessBtn.classList.toggle("active", isBusiness);
+        modeCompanyBtn.classList.toggle("active", isCompany);
+
+        slotsEl.classList.toggle("mode-business", isBusiness);
+        slotsEl.classList.toggle("mode-company", isCompany);
+        slotHkd.style.display = needsBizDoc ? "" : "none";
+        slotBizdocLabel.textContent = isCompany
+          ? "Giấy chứng nhận đăng ký DN"
+          : "Giấy chứng nhận HKD";
+
+        businessCard.style.display = isBusiness ? "" : "none";
+        companyCard.style.display = isCompany ? "" : "none";
+        membersCard.style.display = isCompany ? "" : "none";
+        if (!isCompany) {
+          membersList.innerHTML = "";
+          companyMembersInput.value = "";
+        }
+        accountantCard.style.display = isCompany ? "" : "none";
+        emailReq.style.display = isCompany ? "" : "none";
+        document.getElementById("err-email").classList.remove("show");
+
+        ownerStageNum.textContent = needsBizDoc ? "3" : "2";
+
+        if (isBusiness) {
+          stage1Title.textContent = "Tải ảnh CCCD & Giấy chứng nhận HKD";
+          stage2Title.textContent = "Thông tin chủ hộ kinh doanh";
+        } else if (isCompany) {
+          stage1Title.textContent = "Tải ảnh CCCD & Giấy chứng nhận đăng ký DN";
+          stage2Title.textContent = "Thông tin người đại diện 1";
+        } else {
+          stage1Title.textContent = "Tải ảnh CCCD";
+          stage2Title.textContent = "Kiểm tra thông tin";
+        }
+
+        if (!needsBizDoc) {
+          document.getElementById("hkd").value = "";
+          slotHkd.classList.remove("has-file");
+        }
+      }
+      modePersonalBtn.addEventListener("click", () => setMode("personal"));
+      modeBusinessBtn.addEventListener("click", () => setMode("business"));
+      modeCompanyBtn.addEventListener("click", () => setMode("company"));
+
+      // --- THÊM/XÓA THÀNH VIÊN CÔNG TY (ĐỘNG) ---
+      const membersList = document.getElementById("members-list");
+      const addMemberBtn = document.getElementById("add-member-btn");
+      const companyMembersInput = document.getElementById("companyMembers");
+
+      function addMemberRow() {
+        const row = document.createElement("div");
+        row.className = "member-row";
+        row.innerHTML = `
+          <button type="button" class="remove-member" aria-label="Xóa thành viên">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <div class="fields" style="margin-bottom: 0.9rem;">
+            <div class="field">
+              <label>Họ và tên</label>
+              <input type="text" class="member-name" />
+            </div>
+            <div class="field">
+              <label>Chức danh</label>
+              <input type="text" class="member-title" />
+            </div>
+          </div>
+          <div class="fields" style="margin-bottom: 0.9rem;">
+            <div class="field">
+              <label>Ngày sinh</label>
+              <input type="text" class="member-dob" />
+            </div>
+            <div class="field">
+              <label>Số CCCD</label>
+              <input type="text" class="member-id" />
+            </div>
+          </div>
+          <div class="fields" style="margin-bottom: 0.9rem;">
+            <div class="field">
+              <label>Ngày cấp</label>
+              <input type="text" class="member-issue-date" />
+            </div>
+            <div class="field">
+              <label>Nơi cấp</label>
+              <input type="text" class="member-issue-place" />
+            </div>
+          </div>
+          <div class="fields" style="margin-bottom: 0.9rem;">
+            <div class="field">
+              <label>Ngày hết hạn</label>
+              <input type="text" class="member-expiry-date" />
+            </div>
+            <div class="field">
+              <label>Địa chỉ</label>
+              <input type="text" class="member-address" />
+            </div>
+          </div>
+        `;
+        row.querySelector(".remove-member").addEventListener("click", () => row.remove());
+        membersList.appendChild(row);
+      }
+      addMemberBtn.addEventListener("click", addMemberRow);
+
+      function collectMembers() {
+        const members = [];
+        membersList.querySelectorAll(".member-row").forEach((row) => {
+          const member = {
+            name: row.querySelector(".member-name").value.trim(),
+            title: row.querySelector(".member-title").value.trim(),
+            dob: row.querySelector(".member-dob").value.trim(),
+            idNumber: row.querySelector(".member-id").value.trim(),
+            issueDate: row.querySelector(".member-issue-date").value.trim(),
+            issuePlace: row.querySelector(".member-issue-place").value.trim(),
+            expiryDate: row.querySelector(".member-expiry-date").value.trim(),
+            address: row.querySelector(".member-address").value.trim(),
+          };
+          const hasData = Object.values(member).some((v) => v !== "");
+          if (hasData) members.push(member);
+        });
+        companyMembersInput.value = JSON.stringify(members);
+      }
+
+      // --- BẤM "TRÍCH XUẤT THÔNG TIN" ---
+      const btnExtract = document.getElementById("extract");
+      btnExtract.addEventListener("click", async () => {
+        const imgFront = document.getElementById("front").files[0];
+        const imgBack = document.getElementById("back").files[0];
+        if (!imgFront || !imgBack) {
+          showStatus("error", "Vui lòng tải đủ ảnh CCCD mặt trước và sau");
+          return;
+        }
+        const imgHkd = document.getElementById("hkd").files[0];
+        const imgAccFront = document.getElementById("acc-front").files[0];
+        const imgAccBack = document.getElementById("acc-back").files[0];
+        if (currentMode !== "personal" && !imgHkd) {
+          showStatus("error", "Vui lòng tải ảnh giấy tờ kinh doanh/công ty.");
+          return;
+        }
+        if (currentMode === "company" && (!imgAccFront || !imgAccBack)) {
+          showStatus("error", "Vui lòng tải đủ ảnh CCCD kế toán.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("mode", currentMode);
+        formData.append("image-front", imgFront);
+        formData.append("image-back", imgBack);
+        if (imgHkd) formData.append("image-hkd", imgHkd);
+        if (imgAccFront) formData.append("image-acc-front", imgAccFront);
+        if (imgAccBack) formData.append("image-acc-back", imgAccBack);
+
+        setButtonLoading(btnExtract, true, "Đang trích xuất...", "Trích xuất thông tin");
+        showStatus("info", "Đang đọc thông tin từ ảnh, vui lòng đợi trong giây lát...", true);
+
+        try {
+          const response = await fetch("/scan_ocr", { method: "POST", body: formData });
+          const data = await response.json();
+          if (data.success === false) {
+            showStatus("error", "Lỗi: " + data.message);
+          } else {
+            showInformCustomer(data);
+            showStatus("success", "Đã trích xuất xong — kiểm tra lại thông tin bên dưới trước khi lưu.");
+          }
+        } catch (err) {
+          showStatus("error", "Không kết nối được tới máy chủ, thử lại sau.");
+        } finally {
+          setButtonLoading(btnExtract, false, "", "Trích xuất thông tin");
         }
       });
-      return isValid;
-    }
-    document.getElementById("btn-save").addEventListener("click", async () => {
-      if (validationForm(errID)) {
+
+      // --- ĐIỀN DỮ LIỆU VÀO FORM, CÓ HIỆU ỨNG LÀM NỔI BẬT TỪNG Ô ---
+      function showInformCustomer(data) {
+        Object.entries(data).forEach(([k, v], index) => {
+          const elInput = document.getElementById(k);
+          if (!elInput) return;
+          elInput.value = v ?? "";
+          setTimeout(() => {
+            elInput.classList.remove("just-filled");
+            void elInput.offsetWidth;
+            elInput.classList.add("just-filled");
+          }, index * 60);
+        });
+      }
+
+      // --- LÀM MỚI ---
+      const btnReset = document.getElementById("btn-reset");
+      btnReset.addEventListener("click", () => {
+        document.getElementById("form-customer").reset();
+        document.querySelectorAll(".slot").forEach((s) => s.classList.remove("has-file"));
+        document.getElementById("members-list").innerHTML = "";
+        hideStatus();
+      });
+
+      // --- KIỂM TRA DỮ LIỆU BẮT BUỘC ---
+      function validationForm(errID) {
+        let isValid = true;
+        errID.forEach((id) => {
+          const elInput = document.getElementById(id);
+          const errSpan = document.getElementById(`err-${id}`);
+          if (elInput.value === "") {
+            errSpan.classList.add("show");
+            isValid = false;
+          } else {
+            errSpan.classList.remove("show");
+          }
+        });
+        return isValid;
+      }
+
+      // --- BẤM "LƯU THÔNG TIN" ---
+      const btnSave = document.getElementById("btn-save");
+      btnSave.addEventListener("click", async () => {
+        if (!validationForm(getRequiredFields())) {
+          showStatus("error", "Vui lòng điền đầy đủ các trường bắt buộc.");
+          return;
+        }
+        if (currentMode === "company") collectMembers();
         const formCustomer = document.getElementById("form-customer");
         const formData = new FormData(formCustomer);
-        const response = await fetch("/save_data", {
-          method: "POST",
-          body: formData,
+        formData.append("mode", currentMode);
+        ["front", "back", "hkd", "acc-front", "acc-back"].forEach((id) => {
+          const file = document.getElementById(id).files[0];
+          if (file) formData.append(`image-${id}`, file);
         });
-        const res = await response.json();
-        if (res.success === true) {
-          formCustomer.reset();
-        } else {
-          alert("Lỗi lưu dữ liệu");
+
+        setButtonLoading(btnSave, true, "Đang lưu...", "Lưu thông tin");
+        showStatus("info", "Đang lưu thông tin và gửi hồ sơ...", true);
+
+        try {
+          const response = await fetch("/save_data", { method: "POST", body: formData });
+          const res = await response.json();
+          if (res.success === true) {
+            showStatus("success", "Đã lưu thành công! Hồ sơ đã được gửi.");
+            formCustomer.reset();
+            document.querySelectorAll(".slot").forEach((s) => s.classList.remove("has-file"));
+          } else {
+            showStatus("error", "Lỗi lưu dữ liệu: " + (res.message || "vui lòng thử lại."));
+          }
+        } catch (err) {
+          showStatus("error", "Không kết nối được tới máy chủ, thử lại sau.");
+        } finally {
+          setButtonLoading(btnSave, false, "", "Lưu thông tin");
         }
-      }
-    });
-  </script>
+      });
+    </script>
+  </body>
 </html>

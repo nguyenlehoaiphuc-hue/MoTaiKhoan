@@ -1,7 +1,7 @@
 from email.message import EmailMessage
 import smtplib
 import os
-def send_email(to,cc,subject,body, attachment_bytes=None):
+def send_email(to, cc, subject, body, attachment_bytes=None, attachment_filename="dinh_kem.zip"):
     EMAIL_ACCOUNT = os.getenv("GMAIL_USER")
     APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
     msg = EmailMessage()
@@ -15,8 +15,8 @@ def send_email(to,cc,subject,body, attachment_bytes=None):
         msg.add_attachment(
             attachment_bytes,
             maintype="application",
-            subtype="vnd.openxmlformats-officedocument.wordprocessingml.document",
-            filename="mo_tai_khoan.docx"
+            subtype="zip",
+            filename=attachment_filename
         )
     with smtplib.SMTP("smtp.gmail.com", 587) as server:
         server.starttls()

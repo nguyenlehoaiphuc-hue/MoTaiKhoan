@@ -1,31 +1,49 @@
 from flask import Flask, render_template, request, jsonify
-from gemini_service import extract_cccd
+from gemini_service import extract_cccd, extract_hkd, extract_company
 from supabase import create_client
 import os
 import json
+import re
 from email_service import send_email
-from docx_service import exportForm_MoTaiKhoan
+from docx_service import export_docx
+from zip_service import build_zip
 
 app = Flask(__name__)
+
+supabase = create_client(
+    supabase_url=os.getenv("SUPABASE_URL"),
+    supabase_key=os.getenv("SUPABASE_KEY")
+)
+
+CUSTOMER_FIELDS = [
+    "fullName", "dob", "idCard", "issueDate", "issuePlace",
+    "expiryDate", "address", "phone", "email",
+]
+
+# Chuyển field CCCD (fullName, dob, ...) sang field kế toán (accName, accDob, ...)
+CCCD_TO_ACCOUNTANT_KEY = {
+    "fullName": "accName",
+    "dob": "accDob",
+    "idCard": "accIdCard",
+    "issueDate": "accIssueDate",
+    "issuePlace": "accIssuePlace",
+    "address": "accAddress",
+}
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
+
 @app.route("/scan_ocr", methods=["POST"])
 def scan_ocr():
+    mode = request.form.get("mode", "personal")
 
     if "image-front" not in request.files:
-        return jsonify({
-            "success": False,
-            "message": "Thiếu ảnh mặt trước."
-        }), 400
-
+        return jsonify({"success": False, "message": "Thiếu ảnh mặt trước."}), 400
     if "image-back" not in request.files:
-        return jsonify({
-            "success": False,
-            "message": "Thiếu ảnh mặt sau."
-        }), 400
+        return jsonify({"success": False, "message": "Thiếu ảnh mặt sau."}), 400
 
     front_image = request.files["image-front"]
     back_image = request.files["image-back"]
@@ -36,52 +54,129 @@ def scan_ocr():
         back_bytes=back_image.read(),
         back_mime=back_image.content_type
     )
+    if result.get("success") is False:
+        return jsonify(result)
+
+    if mode == "business":
+        if "image-hkd" not in request.files:
+            return jsonify({"success": False, "message": "Thiếu ảnh Giấy chứng nhận HKD."}), 400
+        hkd_image = request.files["image-hkd"]
+        hkd_result = extract_hkd(hkd_image.read(), hkd_image.content_type)
+        if hkd_result.get("success") is False:
+            return jsonify(hkd_result)
+        result.update(hkd_result)
+
+    elif mode == "company":
+        if "image-hkd" not in request.files:
+            return jsonify({"success": False, "message": "Thiếu ảnh Giấy chứng nhận đăng ký DN."}), 400
+        if "image-acc-front" not in request.files or "image-acc-back" not in request.files:
+            return jsonify({"success": False, "message": "Thiếu ảnh CCCD kế toán."}), 400
+
+        company_image = request.files["image-hkd"]
+        company_result = extract_company(company_image.read(), company_image.content_type)
+        if company_result.get("success") is False:
+            return jsonify(company_result)
+        result.update(company_result)
+
+        acc_front = request.files["image-acc-front"]
+        acc_back = request.files["image-acc-back"]
+        acc_result = extract_cccd(
+            front_bytes=acc_front.read(),
+            front_mime=acc_front.content_type,
+            back_bytes=acc_back.read(),
+            back_mime=acc_back.content_type
+        )
+        if acc_result.get("success") is False:
+            return jsonify(acc_result)
+        for cccd_key, acc_key in CCCD_TO_ACCOUNTANT_KEY.items():
+            result[acc_key] = acc_result.get(cccd_key)
 
     return jsonify(result)
 
-supabase = create_client(
-    supabase_url = os.getenv("SUPABASE_URL"),
-    supabase_key = os.getenv("SUPABASE_KEY")
-)
+
+def build_email_content(mode, data):
+    """Trả về (subject, body_gdv, body_customer) tùy theo loại khách hàng."""
+    if mode == "business":
+        name = data.get("businessName") or data.get("fullName")
+        subject = f"Mẫu mở tài khoản HKD {name}"
+    elif mode == "company":
+        name = data.get("companyName") or data.get("fullName")
+        subject = f"Mẫu mở tài khoản công ty {name}"
+    else:
+        name = data.get("fullName")
+        subject = f"Mẫu mở tài khoản KH {name}"
+
+    body_gdv = f"""Kính gửi: Anh/Chị,
+KH {name} đã có form mở tài khoản.
+Vui lòng kiểm tra thông tin trước khi cho KH ký.
+P/s: Đây là email tự động. Vui lòng không trả lời.
+Trân trọng,
+"""
+    body_customer = """Kính gửi: Quý khách,
+Form mở tài khoản của Quý khách đã được hoàn tất.
+Vui lòng kiểm tra thông tin trước khi in.
+P/s: Đây là email tự động. Vui lòng không trả lời.
+Trân trọng,
+"""
+    return subject, body_gdv, body_customer, name
+
+
+def safe_filename(name: str) -> str:
+    """Loại bỏ ký tự không hợp lệ trong tên file (/, \\, :, v.v.)."""
+    if not name:
+        return "ho_so"
+    return re.sub(r'[\\/:*?"<>|]', "", name).strip()
+
+
 @app.route("/save_data", methods=["POST"])
 def save_data():
-    data = request.form.to_dict()
+    raw = request.form.to_dict()
+    mode = raw.pop("mode", "personal")
+
     try:
-        supabase.table("customer").insert(data).execute()
-        try: 
-            mailGDV = os.getenv("MAIL_GDV")
-            name_customer = data["fullName"]
-            subject = f"Mẫu mở tài khoản KH {name_customer}"
-            attachment_bytes = exportForm_MoTaiKhoan(data).read()
-            if(data["email"] == ""):
-                reciever = mailGDV
-                body = f"""Kính gửi: Anh/Chị,
-                KH {name_customer} đã có form mở tài khoản. 
-                Vui lòng kiểm tra thông tin trước khi cho KH ký.
-                P/s: Đây là email tự động. Vui lòng không trả lời.
-                Trân trọng, 
-                """
-                
-                send_email(reciever,"",subject,body, attachment_bytes)
-            else:
-                reciever = data["email"]
-                cc = mailGDV
-                body ="""Kính gửi: Quý khách,
-                Form mở tài khoản của Quý khách đã được hoàn tất.
-                Vui lòng kiểm tra thông tin trước khi in.
-                P/s: Đây là email tự động. Vui lòng không trả lời.
-                Trân trọng, 
-                """
-                send_email(reciever,cc,subject,body,attachment_bytes)
-        except Exception as e:
-            print(e)
-        return jsonify({"success": True})
+        if mode == "personal":
+            insert_data = {k: raw.get(k, "") for k in CUSTOMER_FIELDS}
+            supabase.table("customer").insert(insert_data).execute()
+        else:
+            insert_data = dict(raw)
+            insert_data["type"] = "hkd" if mode == "business" else "company"
+            supabase.table("business").insert(insert_data).execute()
     except Exception as e:
-        return jsonify({
-            "success": False,
-            "message": str(e)
-        })
+        return jsonify({"success": False, "message": str(e)})
+
+    # Gửi email + đính kèm zip (ảnh + form mẫu) — lỗi ở đây không tính là lưu thất bại
+    try:
+        image_fields = ["image-front", "image-back", "image-hkd", "image-acc-front", "image-acc-back"]
+        images = {}
+        for field in image_fields:
+            if field in request.files:
+                f = request.files[field]
+                images[f.filename or field] = f.read()
+
+        docx_data = dict(raw)
+        if docx_data.get("companyMembers"):
+            try:
+                docx_data["companyMembers"] = json.loads(docx_data["companyMembers"])
+            except (json.JSONDecodeError, TypeError):
+                docx_data["companyMembers"] = []
+        else:
+            docx_data["companyMembers"] = []
+        docx_files = export_docx(mode, docx_data)
+        zip_bytes = build_zip(images, docx_files)
+
+        subject, body_gdv, body_customer, customer_name = build_email_content(mode, raw)
+        mail_gdv = os.getenv("MAIL_GDV")
+        zip_filename = f"{safe_filename(customer_name)}.zip"
+
+        if raw.get("email"):
+            send_email(raw["email"], mail_gdv, subject, body_customer, zip_bytes, zip_filename)
+        else:
+            send_email(mail_gdv, "", subject, body_gdv, zip_bytes, zip_filename)
+    except Exception as e:
+        print(e)
+
+    return jsonify({"success": True})
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
-
-
+    app.run(debug=True, port=5001)
