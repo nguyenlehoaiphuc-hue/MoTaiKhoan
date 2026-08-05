@@ -44,6 +44,8 @@ def scan_ocr():
         return jsonify({"success": False, "message": "Thiếu ảnh mặt trước."}), 400
     if "image-back" not in request.files:
         return jsonify({"success": False, "message": "Thiếu ảnh mặt sau."}), 400
+    if "image-phone-verify" not in request.files:
+        return jsonify({"success": False, "message": "Thiếu ảnh định danh số điện thoại (TTTB)."}), 400
 
     front_image = request.files["image-front"]
     back_image = request.files["image-back"]
@@ -157,7 +159,7 @@ def save_data():
 
     # Gửi email + đính kèm zip (ảnh + form mẫu) — lỗi ở đây không tính là lưu thất bại
     try:
-        image_fields = ["image-front", "image-back", "image-hkd", "image-acc-front", "image-acc-back"]
+        image_fields = ["image-front", "image-back", "image-phone-verify", "image-hkd", "image-acc-front", "image-acc-back"]
         images = {}
         for field in image_fields:
             if field in request.files:
