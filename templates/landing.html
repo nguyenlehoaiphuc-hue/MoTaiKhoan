@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Nguyễn Lê Hoài Phúc — VietinBank CN Gia Định</title>
+    <meta name="description" content="Cán bộ Quan hệ Khách hàng VietinBank Gia Định, 10 năm kinh nghiệm. Tư vấn vay vốn, gửi tiết kiệm và mở tài khoản trực tuyến." />
+    <meta property="og:title" content="Nguyễn Lê Hoài Phúc — VietinBank CN Gia Định" />
+    <meta property="og:description" content="Tư vấn vay vốn, gửi tiết kiệm và mở tài khoản trực tuyến — hỗ trợ trực tiếp, không qua trung gian." />
+
+    <style>
+      :root {
+        --ink: #0f2436;
+        --ink-muted: #56708a;
+        --surface: #eef7fc;
+        --surface-2: #d2e8f7;
+        --sky: #0b7fc9;
+        --sky-deep: #085d94;
+        --sky-soft: #e1f1fc;
+        --line: #d9ecf8;
+        --success: #1e8a5f;
+        --success-soft: #e0f0e8;
+        --alert: #c23b4f;
+        --alert-soft: #fbe3e7;
+        --cta-bg: #0f2436;
+        --cta-text: #ffffff;
+        --red: #e3032d;
+        --gold: #d99a10;
+        --gold-soft: #faedcd;
+        --body-bg:
+          linear-gradient(to right, #74b5e2 0%, rgba(116, 181, 226, 0) 45%),
+          linear-gradient(to left, #74b5e2 0%, rgba(116, 181, 226, 0) 45%),
+          #d5e9f7;
+        --shadow: 0 1px 2px rgba(15, 36, 54, 0.05), 0 16px 40px rgba(15, 36, 54, 0.07);
+      }
+      :root[data-theme="dark"] {
+        --ink: #eaf3fb;
+        --ink-muted: #8fa8bd;
+        --surface: #122130;
+        --surface-2: #16283a;
+        --sky: #4fb1ef;
+        --sky-deep: #7cc8f5;
+        --sky-soft: #163044;
+        --line: #1f3547;
+        --cta-bg: #4fb1ef;
+        --cta-text: #062434;
+        --red: #ef5169;
+        --gold: #f0c04d;
+        --gold-soft: #2c2410;
+        --body-bg: linear-gradient(180deg, #0a1620 0%, #0d1d29 55%);
+        --success: #4fbe8c;
+        --success-soft: #133226;
+        --alert: #e2707f;
+        --alert-soft: #351f26;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--body-bg);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+      h1, h2, h3 {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        text-wrap: balance;
+        margin: 0;
+      }
+      p { margin: 0; }
+      a { color: inherit; }
+      @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; }
+      }
+      a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+        outline: 2px solid var(--sky);
+        outline-offset: 2px;
+      }
+
+      .page { max-width: 1080px; margin: 0 auto; padding: 1.4rem 1.25rem 4rem; }
+
+      /* ---- THANH ĐIỀU HƯỚNG ---- */
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.4rem 0 2.6rem;
+      }
+      .nav-brand { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 0.92rem; }
+      .nav-brand .dot {
+        width: 0.55rem; height: 0.55rem; border-radius: 50%;
+        background: linear-gradient(135deg, var(--sky), var(--gold));
+        flex-shrink: 0;
+      }
+      .nav-actions { display: flex; align-items: center; gap: 0.6rem; }
+      .theme-toggle {
+        width: 2.2rem; height: 2.2rem; border-radius: 50%;
+        border: 1px solid var(--line); background: var(--surface); color: var(--sky-deep);
+        display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+      }
+      .theme-toggle:hover { border-color: var(--sky); }
+      .theme-toggle .sun { display: none; }
+      :root[data-theme="dark"] .theme-toggle .moon { display: none; }
+      :root[data-theme="dark"] .theme-toggle .sun { display: block; }
+
+      .btn {
+        appearance: none; border: none; border-radius: 999px; cursor: pointer;
+        font-size: 0.88rem; font-weight: 700;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+        padding: 0.85rem 1.4rem;
+        transition: transform 0.08s ease, filter 0.15s ease, background-color 0.15s ease;
+        white-space: nowrap;
+        text-decoration: none;
+      }
+      .btn:active { transform: scale(0.98); }
+      .btn-primary { background: var(--cta-bg); color: var(--cta-text); }
+      .btn-primary:hover { filter: brightness(0.92); }
+      .btn-ghost { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+      .btn-ghost:hover { border-color: var(--sky); color: var(--sky-deep); }
+      .btn-sm { padding: 0.6rem 1.05rem; font-size: 0.8rem; }
+
+      /* ---- HERO ---- */
+      .hero {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 3rem;
+        align-items: center;
+        margin-bottom: 3.6rem;
+      }
+      @media (max-width: 780px) {
+        .hero { grid-template-columns: 1fr; gap: 2.4rem; }
+        .hero-visual { order: -1; }
+      }
+      .eyebrow {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 700;
+        color: var(--sky-deep); background: var(--sky-soft);
+        padding: 0.4rem 0.8rem; border-radius: 999px; margin-bottom: 1.1rem;
+      }
+      .eyebrow .bar { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--red); }
+      .hero h1 { font-size: clamp(1.9rem, 4.2vw, 2.7rem); line-height: 1.2; margin-bottom: 1.1rem; }
+      .hero h1 em { font-style: normal; color: var(--sky-deep); }
+      .hero p.lede { color: var(--ink-muted); font-size: 1.02rem; max-width: 46ch; margin-bottom: 1.7rem; }
+      .hero-ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem; }
+      .contact-chip {
+        display: inline-flex; align-items: center; gap: 0.55rem;
+        font-size: 0.86rem; font-weight: 600; color: var(--ink-muted);
+      }
+      .contact-chip a {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        color: var(--sky-deep); text-decoration: none; font-weight: 700;
+      }
+      .contact-chip a:hover { text-decoration: underline; }
+      .contact-chip svg { flex-shrink: 0; }
+
+      /* ---- AVATAR / VISUAL ---- */
+      .hero-visual { display: flex; justify-content: center; position: relative; }
+      .avatar-card {
+        position: relative;
+        width: 15.5rem; height: 15.5rem;
+        border-radius: 32px;
+        background: linear-gradient(155deg, var(--sky-deep) 0%, #062a4a 100%);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: var(--shadow);
+      }
+      :root[data-theme="dark"] .avatar-card { background: linear-gradient(155deg, #0e3a5e 0%, #071826 100%); }
+      .avatar-ring {
+        width: 10.8rem; height: 10.8rem; border-radius: 50%;
+        background: linear-gradient(135deg, var(--gold) 0%, var(--sky) 100%);
+        display: flex; align-items: center; justify-content: center; padding: 4px;
+      }
+      .avatar-mono {
+        width: 100%; height: 100%; border-radius: 50%;
+        background: var(--surface);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.6rem; font-weight: 800; color: var(--sky-deep);
+        letter-spacing: -0.02em;
+      }
+      .avatar-badge {
+        position: absolute; bottom: -0.9rem; left: 50%; transform: translateX(-50%);
+        background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+        border-radius: 999px; padding: 0.55rem 1.1rem;
+        display: flex; align-items: baseline; gap: 0.35rem; white-space: nowrap;
+      }
+      .avatar-badge .num { font-size: 1.15rem; font-weight: 800; color: var(--sky-deep); font-variant-numeric: tabular-nums; }
+      .avatar-badge .lbl { font-size: 0.72rem; color: var(--ink-muted); font-weight: 600; }
+
+      /* ---- ĐIỂM TIN CẬY ---- */
+      .pillars {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.9rem;
+        margin-bottom: 3.6rem;
+      }
+      @media (max-width: 780px) { .pillars { grid-template-columns: 1fr 1fr; } }
+      @media (max-width: 460px) { .pillars { grid-template-columns: 1fr; } }
+      .pillar {
+        background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+        padding: 1.1rem 1.15rem; box-shadow: var(--shadow);
+      }
+      .pillar .icon {
+        width: 2.1rem; height: 2.1rem; border-radius: 10px; background: var(--sky-soft); color: var(--sky-deep);
+        display: flex; align-items: center; justify-content: center; margin-bottom: 0.7rem;
+      }
+      .pillar h3 { font-size: 0.88rem; margin-bottom: 0.3rem; }
+      .pillar p { font-size: 0.78rem; color: var(--ink-muted); }
+
+      /* ---- SECTION CHUNG ---- */
+      .section { margin-bottom: 3.6rem; }
+      .section-head { text-align: center; max-width: 40ch; margin: 0 auto 2rem; }
+      .section-head .section-label {
+        display: block; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+        font-weight: 700; color: var(--sky-deep); margin-bottom: 0.6rem;
+      }
+      .section-head h2 { font-size: clamp(1.35rem, 3vw, 1.7rem); }
+
+      /* ---- SẢN PHẨM ---- */
+      .products { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; }
+      @media (max-width: 680px) { .products { grid-template-columns: 1fr; } }
+      .product-card {
+        background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+        padding: 1.8rem; box-shadow: var(--shadow); display: flex; flex-direction: column;
+      }
+      .product-card .tag {
+        align-self: flex-start; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em;
+        text-transform: uppercase; padding: 0.3rem 0.65rem; border-radius: 999px; margin-bottom: 1rem;
+      }
+      .product-card.vay .tag { background: var(--alert-soft); color: var(--red); }
+      .product-card.tietkiem .tag { background: var(--gold-soft); color: var(--gold); }
+      .product-card h3 { font-size: 1.2rem; margin-bottom: 0.6rem; }
+      .product-card p { color: var(--ink-muted); font-size: 0.9rem; margin-bottom: 1.4rem; flex: 1; }
+
+      /* ---- BĂNG CTA ---- */
+      .cta-banner {
+        background: var(--cta-bg); color: var(--cta-text);
+        border-radius: 24px; padding: 2.2rem 1.8rem;
+        display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem;
+      }
+      .cta-banner h2 { font-size: clamp(1.2rem, 2.6vw, 1.5rem); color: var(--cta-text); margin-bottom: 0.4rem; }
+      .cta-banner p { color: color-mix(in srgb, var(--cta-text) 75%, transparent); font-size: 0.88rem; }
+      .cta-banner .btn-primary { background: var(--cta-text); color: var(--cta-bg); }
+      :root[data-theme="dark"] .cta-banner .btn-primary { background: #062434; color: var(--cta-text); }
+
+      /* ---- FORM LIÊN HỆ ---- */
+      .contact-card {
+        background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+        box-shadow: var(--shadow); padding: 2rem; max-width: 34rem; margin: 0 auto;
+      }
+      #status {
+        display: none; align-items: center; gap: 0.6rem; margin-bottom: 1.1rem;
+        padding: 0.75rem 1rem; border-radius: 12px; font-size: 0.85rem; font-weight: 600;
+      }
+      #status.show { display: flex; }
+      #status.info { background: var(--sky-soft); color: var(--sky-deep); }
+      #status.success { background: var(--success-soft); color: var(--success); }
+      #status.error { background: var(--alert-soft); color: var(--alert); }
+      .spinner {
+        width: 0.9rem; height: 0.9rem; border-radius: 50%;
+        border: 2px solid currentColor; border-top-color: transparent;
+        animation: spin 0.7s linear infinite; flex-shrink: 0; display: none;
+      }
+      #status.show .spinner[data-show="1"] { display: inline-block; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.1rem; }
+      .field label {
+        font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700;
+        color: var(--sky-deep);
+      }
+      .field label .req { color: var(--alert); margin-left: 0.15rem; }
+      .field input, .field select, .field textarea {
+        border: 1px solid var(--line); border-radius: 12px; padding: 0.65rem 0.8rem;
+        font-size: 0.94rem; color: var(--ink); background: var(--surface-2);
+        outline: none; font-family: inherit;
+        transition: border-color 0.15s ease, background-color 0.6s ease;
+      }
+      .field textarea { resize: vertical; min-height: 4.5rem; }
+      .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--sky); background: var(--surface); }
+      .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+      @media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
+
+      /* ---- FOOTER ---- */
+      .footer {
+        margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line);
+        display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.2rem;
+        font-size: 0.82rem; color: var(--ink-muted);
+      }
+      .footer strong { color: var(--ink); }
+      .footer .footer-links { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+      .footer .footer-links a { color: var(--sky-deep); text-decoration: none; font-weight: 600; }
+      .footer .footer-links a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <nav class="nav">
+        <div class="nav-brand">
+          <span class="dot"></span>
+          Nguyễn Lê Hoài Phúc · VietinBank Gia Định
+        </div>
+        <div class="nav-actions">
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Đổi giao diện sáng/tối">
+            <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.3M12 19.2v2.3M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.3M19.2 12h2.3M4.4 19.6L6 18M18 6l1.6-1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </button>
+          <a class="btn btn-primary btn-sm" href="/mo-tai-khoan">Mở tài khoản</a>
+        </div>
+      </nav>
+
+      <section class="hero">
+        <div>
+          <span class="eyebrow"><span class="bar"></span>CB Quan hệ khách hàng · VietinBank chi nhánh Gia Định</span>
+          <h1>Đồng hành tài chính cùng bạn — <em>tận tâm từng hồ sơ</em></h1>
+          <p class="lede">
+            10 năm gắn bó ngành ngân hàng, hỗ trợ khách hàng vay vốn, gửi tiết kiệm và mở tài khoản.
+            Tư vấn trực tiếp một-kèm-một, không qua trung gian.
+          </p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="/mo-tai-khoan">Mở tài khoản ngay</a>
+            <a class="btn btn-ghost" href="#lien-he">Liên hệ tư vấn</a>
+          </div>
+          <div class="contact-chip">
+            Liên hệ trực tiếp:
+            <a href="tel:0974019432">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1l-2.2 2.2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              0974 019 432
+            </a>
+            <a href="https://zalo.me/0974019432" target="_blank" rel="noopener">Zalo</a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="avatar-card">
+            <div class="avatar-ring">
+              <div class="avatar-mono">NLHP</div>
+            </div>
+            <div class="avatar-badge">
+              <span class="num">10</span>
+              <span class="lbl">năm kinh nghiệm</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="pillars">
+        <div class="pillar">
+          <div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0112 6.5 5.5 5.5 0 0121.5 12c-2.5 4.5-9.5 9-9.5 9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+          <h3>Tư vấn một-kèm-một</h3>
+          <p>Trao đổi trực tiếp với tôi, không qua trung gian hay tổng đài.</p>
+        </div>
+        <div class="pillar">
+          <div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Đồng hành trọn quy trình</h3>
+          <p>Từ tư vấn ban đầu đến hoàn tất hồ sơ tại quầy.</p>
+        </div>
+        <div class="pillar">
+          <div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+          <h3>Phản hồi nhanh</h3>
+          <p>Nhắn Zalo hoặc gọi trực tiếp, phản hồi trong ngày làm việc.</p>
+        </div>
+        <div class="pillar">
+          <div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+          <h3>10 năm trong ngành</h3>
+          <p>Kinh nghiệm xử lý đa dạng hồ sơ cá nhân, hộ kinh doanh, công ty.</p>
+        </div>
+      </section>
+
+      <section class="section" id="san-pham">
+        <div class="section-head">
+          <span class="section-label">Sản phẩm</span>
+          <h2>Vay vốn &amp; Gửi tiết kiệm</h2>
+        </div>
+        <div class="products">
+          <div class="product-card vay">
+            <span class="tag">Vay vốn</span>
+            <h3>Vay tiêu dùng, vay kinh doanh</h3>
+            <p>
+              Thông tin lãi suất và điều kiện chi tiết đang được cập nhật theo từng thời điểm.
+              Để lại thông tin, tôi sẽ tư vấn gói vay phù hợp nhất với nhu cầu của bạn.
+            </p>
+            <button type="button" class="btn btn-ghost need-cta" data-need="vay">Đăng ký tư vấn vay</button>
+          </div>
+          <div class="product-card tietkiem">
+            <span class="tag">Tiết kiệm</span>
+            <h3>Gửi tiết kiệm linh hoạt</h3>
+            <p>
+              Lãi suất tiết kiệm thay đổi theo kỳ hạn và chính sách hiện hành.
+              Để lại thông tin, tôi sẽ gửi bạn mức lãi suất mới nhất và tư vấn kỳ hạn phù hợp.
+            </p>
+            <button type="button" class="btn btn-ghost need-cta" data-need="tiet-kiem">Đăng ký tư vấn tiết kiệm</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="cta-banner">
+          <div>
+            <h2>Đã có CCCD trong tay?</h2>
+            <p>Mở tài khoản trực tuyến chỉ trong 3 phút, không cần chờ tại quầy.</p>
+          </div>
+          <a class="btn btn-primary" href="/mo-tai-khoan">Mở tài khoản ngay</a>
+        </div>
+      </section>
+
+      <section class="section" id="lien-he">
+        <div class="section-head">
+          <span class="section-label">Liên hệ</span>
+          <h2>Để lại thông tin, tôi sẽ liên hệ tư vấn</h2>
+        </div>
+        <div class="contact-card">
+          <div id="status" role="status" aria-live="polite">
+            <span class="spinner" id="status-spinner"></span>
+            <span id="status-text"></span>
+          </div>
+          <form id="lead-form">
+            <div class="field-row">
+              <div class="field">
+                <label for="name">Họ và tên<span class="req">*</span></label>
+                <input type="text" name="name" id="name" required />
+              </div>
+              <div class="field">
+                <label for="phone">Số điện thoại<span class="req">*</span></label>
+                <input type="text" name="phone" id="phone" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="needType">Nhu cầu</label>
+              <select name="needType" id="needType">
+                <option value="vay">Vay vốn</option>
+                <option value="tiet-kiem">Gửi tiết kiệm</option>
+                <option value="khac">Khác</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="message">Lời nhắn (không bắt buộc)</label>
+              <textarea name="message" id="message" placeholder="Mô tả ngắn nhu cầu của bạn..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" id="btn-submit-lead" style="width: 100%;">
+              <span class="btn-label">Gửi thông tin</span>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div>
+          <strong>Nguyễn Lê Hoài Phúc</strong><br />
+          CB Quan hệ khách hàng — VietinBank chi nhánh Gia Định<br />
+          0974 019 432
+        </div>
+        <div class="footer-links">
+          <a href="/mo-tai-khoan">Mở tài khoản</a>
+          <a href="#san-pham">Sản phẩm</a>
+          <a href="#lien-he">Liên hệ</a>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // --- ĐỔI GIAO DIỆN SÁNG / TỐI, NHỚ LỰA CHỌN CHO LẦN SAU ---
+      const rootEl = document.documentElement;
+      const themeToggle = document.getElementById("theme-toggle");
+      const savedTheme = localStorage.getItem("motaikhoan-theme");
+      if (savedTheme) {
+        rootEl.setAttribute("data-theme", savedTheme);
+      } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        rootEl.setAttribute("data-theme", "dark");
+      } else {
+        rootEl.setAttribute("data-theme", "light");
+      }
+      themeToggle.addEventListener("click", () => {
+        const next = rootEl.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        rootEl.setAttribute("data-theme", next);
+        localStorage.setItem("motaikhoan-theme", next);
+      });
+
+      // --- THANH TRẠNG THÁI ---
+      const statusEl = document.getElementById("status");
+      const statusText = document.getElementById("status-text");
+      const statusSpinner = document.getElementById("status-spinner");
+      function showStatus(type, message, loading = false) {
+        statusEl.className = `show ${type}`;
+        statusText.textContent = message;
+        statusSpinner.dataset.show = loading ? "1" : "0";
+      }
+
+      // --- BẤM "ĐĂNG KÝ TƯ VẤN VAY/TIẾT KIỆM" Ở KHỐI SẢN PHẨM → CUỘN TỚI FORM & CHỌN SẴN NHU CẦU ---
+      document.querySelectorAll(".need-cta").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.getElementById("needType").value = btn.dataset.need;
+          document.getElementById("lien-he").scrollIntoView({ behavior: "smooth", block: "start" });
+          document.getElementById("name").focus({ preventScroll: true });
+        });
+      });
+
+      // --- GỬI FORM LIÊN HỆ ---
+      const leadForm = document.getElementById("lead-form");
+      const btnSubmitLead = document.getElementById("btn-submit-lead");
+      leadForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(leadForm);
+        btnSubmitLead.disabled = true;
+        showStatus("info", "Đang gửi thông tin...", true);
+        try {
+          const response = await fetch("/dang_ky_tu_van", { method: "POST", body: formData });
+          const data = await response.json();
+          if (data.success) {
+            showStatus("success", "Đã gửi thành công! Tôi sẽ liên hệ lại sớm nhất.");
+            leadForm.reset();
+          } else {
+            showStatus("error", "Lỗi: " + (data.message || "vui lòng thử lại."));
+          }
+        } catch (err) {
+          showStatus("error", "Không kết nối được tới máy chủ, thử lại sau.");
+        } finally {
+          btnSubmitLead.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

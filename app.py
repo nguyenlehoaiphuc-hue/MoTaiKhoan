@@ -32,6 +32,11 @@ CCCD_TO_ACCOUNTANT_KEY = {
 
 
 @app.route("/")
+def landing():
+    return render_template("landing.html")
+
+
+@app.route("/mo-tai-khoan")
 def index():
     return render_template("index.html")
 
@@ -190,6 +195,52 @@ def save_data():
             send_email(raw["email"], mail_gdv, subject, body_customer, zip_bytes, zip_filename)
         else:
             send_email(mail_gdv, "", subject, body_gdv, zip_bytes, zip_filename)
+    except Exception as e:
+        print(e)
+
+    return jsonify({"success": True})
+
+
+NEED_TYPE_LABELS = {
+    "vay": "Vay",
+    "tiet-kiem": "Tiết kiệm",
+    "khac": "Khác",
+}
+
+
+@app.route("/dang_ky_tu_van", methods=["POST"])
+def dang_ky_tu_van():
+    data = request.form.to_dict()
+    name = data.get("name", "").strip()
+    phone = data.get("phone", "").strip()
+    need_type = data.get("needType", "khac")
+    message = data.get("message", "").strip()
+
+    if not name or not phone:
+        return jsonify({"success": False, "message": "Vui lòng nhập đầy đủ họ tên và số điện thoại."}), 400
+
+    try:
+        supabase.table("lead").insert({
+            "name": name,
+            "phone": phone,
+            "needType": need_type,
+            "message": message,
+        }).execute()
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)})
+
+    try:
+        need_label = NEED_TYPE_LABELS.get(need_type, "Khác")
+        subject = f"[Đăng ký tư vấn] {name} - {need_label}"
+        body = f"""Có khách hàng mới để lại thông tin tư vấn trên landing page:
+
+Họ tên: {name}
+Số điện thoại: {phone}
+Nhu cầu: {need_label}
+Lời nhắn: {message or "(không có)"}
+"""
+        mail_gdv = os.getenv("MAIL_GDV")
+        send_email(mail_gdv, "", subject, body)
     except Exception as e:
         print(e)
 
