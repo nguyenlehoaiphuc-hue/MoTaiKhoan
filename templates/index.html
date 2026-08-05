@@ -1364,6 +1364,62 @@
               <span class="filename" id="inf-img-acc-back"></span>
               <input id="acc-back" type="file" accept="image/*" />
             </label>
+
+            <label class="slot" id="slot-acc-phone-verify">
+              <img class="preview" id="preview-acc-phone-verify" alt="" />
+              <span class="badge">
+                <svg width="10" height="10" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M4 10l4 4 8-8"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <div class="placeholder">
+                <svg
+                  class="icon"
+                  width="26"
+                  height="26"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M7 2h10a1 1 0 011 1v18a1 1 0 01-1 1H7a1 1 0 01-1-1V3a1 1 0 011-1z"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M10 19h4"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M8.5 7.5l2 2 4-4"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <p class="label">Ảnh định danh SĐT kế toán</p>
+                <p class="sub">Bấm để chọn ảnh</p>
+              </div>
+              <span class="filename" id="inf-img-acc-phone-verify"></span>
+              <input id="acc-phone-verify" type="file" accept="image/*" />
+            </label>
+
+            <p class="slot-note">
+              <b>Ảnh định danh SĐT kế toán:</b> soạn tin nhắn theo cú pháp
+              <code>TTTB &lt;Số CCCD kế toán&gt;</code> gửi tới tổng đài nhà
+              mạng đang dùng, sau đó chụp lại màn hình tin nhắn phản hồi và
+              tải lên đây.
+            </p>
           </div>
 
           <div class="fields" style="margin-bottom: 1.1rem">
@@ -1586,12 +1642,19 @@
         "preview-acc-back",
         "inf-img-acc-back",
       );
+      setupSlotPreview(
+        "acc-phone-verify",
+        "slot-acc-phone-verify",
+        "preview-acc-phone-verify",
+        "inf-img-acc-phone-verify",
+      );
 
-      // --- TỰ ĐỘNG TRÍCH XUẤT CCCD KẾ TOÁN NGAY KHI ĐỦ 2 ẢNH (không cần bấm nút) ---
+      // --- TỰ ĐỘNG TRÍCH XUẤT CCCD KẾ TOÁN NGAY KHI ĐỦ ẢNH (không cần bấm nút) ---
       function maybeAutoScanAccountant() {
         const accFront = document.getElementById("acc-front").files[0];
         const accBack = document.getElementById("acc-back").files[0];
-        if (!accFront || !accBack) return;
+        const accPhoneVerify = document.getElementById("acc-phone-verify").files[0];
+        if (!accFront || !accBack || !accPhoneVerify) return;
 
         const formData = new FormData();
         formData.append("image-acc-front", accFront);
@@ -1621,6 +1684,9 @@
         .addEventListener("change", maybeAutoScanAccountant);
       document
         .getElementById("acc-back")
+        .addEventListener("change", maybeAutoScanAccountant);
+      document
+        .getElementById("acc-phone-verify")
         .addEventListener("change", maybeAutoScanAccountant);
 
       // --- CHUYỂN ĐỔI CHẾ ĐỘ: CÁ NHÂN / HỘ KINH DOANH / CÔNG TY ---
@@ -1893,6 +1959,7 @@
           "hkd",
           "acc-front",
           "acc-back",
+          "acc-phone-verify",
         ].forEach((id) => {
           const file = document.getElementById(id).files[0];
           if (file) formData.append(`image-${id}`, file);

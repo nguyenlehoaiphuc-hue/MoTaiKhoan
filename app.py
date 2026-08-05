@@ -89,6 +89,8 @@ def scan_accountant():
     """Trích xuất riêng CCCD kế toán — gọi tự động khi đủ 2 ảnh, không cần bấm nút."""
     if "image-acc-front" not in request.files or "image-acc-back" not in request.files:
         return jsonify({"success": False, "message": "Thiếu ảnh CCCD kế toán."}), 400
+    if "image-acc-phone-verify" not in request.files:
+        return jsonify({"success": False, "message": "Thiếu ảnh định danh SĐT kế toán."}), 400
 
     acc_front = request.files["image-acc-front"]
     acc_back = request.files["image-acc-back"]
@@ -159,7 +161,10 @@ def save_data():
 
     # Gửi email + đính kèm zip (ảnh + form mẫu) — lỗi ở đây không tính là lưu thất bại
     try:
-        image_fields = ["image-front", "image-back", "image-phone-verify", "image-hkd", "image-acc-front", "image-acc-back"]
+        image_fields = [
+            "image-front", "image-back", "image-phone-verify", "image-hkd",
+            "image-acc-front", "image-acc-back", "image-acc-phone-verify",
+        ]
         images = {}
         for field in image_fields:
             if field in request.files:
