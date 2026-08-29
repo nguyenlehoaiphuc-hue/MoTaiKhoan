@@ -166,6 +166,9 @@ def save_data():
             supabase.table("customer").insert(insert_data).execute()
         else:
             insert_data = dict(raw)
+            # Bảng business chưa có 2 cột này — chỉ áp dụng cho customer
+            insert_data.pop("customerEmail", None)
+            insert_data.pop("workplace", None)
             insert_data["type"] = "hkd" if mode == "business" else "company"
             supabase.table("business").insert(insert_data).execute()
     except Exception as e:
