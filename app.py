@@ -37,13 +37,14 @@ CCCD_TO_ACCOUNTANT_KEY = {
 
 
 @app.route("/")
-def landing():
-    return render_template("landing.html")
-
-
 @app.route("/mo-tai-khoan")
 def index():
     return render_template("index.html")
+
+
+@app.route("/gioi-thieu")
+def landing():
+    return render_template("landing.html")
 
 
 @app.route("/scan_ocr", methods=["POST"])
