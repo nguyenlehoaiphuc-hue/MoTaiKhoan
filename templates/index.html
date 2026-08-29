@@ -1207,7 +1207,7 @@
               </div>
             </div>
 
-            <div class="fields">
+            <div class="fields" style="margin-bottom: 1.1rem">
               <div class="field">
                 <label for="phone"
                   >Số điện thoại<span class="req">*</span></label
@@ -1217,6 +1217,40 @@
                   >Vui lòng nhập đầy đủ thông tin</span
                 >
               </div>
+              <div class="field">
+                <label for="customerEmail">Email khách hàng</label>
+                <input
+                  type="text"
+                  name="customerEmail"
+                  id="customerEmail"
+                  placeholder="Email của khách hàng"
+                />
+                <span class="field-hint">Email cá nhân của khách hàng</span>
+              </div>
+            </div>
+
+            <div class="fields single" style="margin-bottom: 1.1rem">
+              <div class="field">
+                <label for="workplace"
+                  >Nơi làm việc<span class="req">*</span></label
+                >
+                <input
+                  type="text"
+                  name="workplace"
+                  id="workplace"
+                  placeholder="VD: HOANG HIEP"
+                />
+                <span class="field-hint"
+                  >Nhập tên công ty/nơi làm việc <b>không dấu, viết hoa</b>.
+                  VD: công ty Hoàng Hiệp → nhập <code>HOANG HIEP</code></span
+                >
+                <span id="err-workplace" class="err"
+                  >Vui lòng nhập đầy đủ thông tin</span
+                >
+              </div>
+            </div>
+
+            <div class="fields single">
               <div class="field">
                 <label for="email"
                   >Email nhận hồ sơ<span
@@ -1567,17 +1601,39 @@
         "accEmail",
         "accPhone",
       ];
+      const commonErrID = ["workplace"];
       function getRequiredFields() {
         if (currentMode === "business")
-          return personalErrID.concat(businessErrID);
+          return commonErrID.concat(personalErrID).concat(businessErrID);
         if (currentMode === "company") {
-          return personalErrID
+          return commonErrID
+            .concat(personalErrID)
             .concat(["email"])
             .concat(companyErrID)
             .concat(accountantErrID);
         }
-        return personalErrID;
+        return commonErrID.concat(personalErrID);
       }
+
+      // --- CHUẨN HÓA "NƠI LÀM VIỆC": TỰ ĐỘNG VIẾT HOA, BỎ DẤU KHI GÕ ---
+      function stripVietnameseAccents(str) {
+        return str
+          .normalize("NFD")
+          .replace(/[̀-ͯ]/g, "")
+          .replace(/đ/g, "d")
+          .replace(/Đ/g, "D");
+      }
+      const workplaceInput = document.getElementById("workplace");
+      workplaceInput.addEventListener("input", () => {
+        const pos = workplaceInput.selectionStart;
+        const converted = stripVietnameseAccents(
+          workplaceInput.value,
+        ).toUpperCase();
+        if (converted !== workplaceInput.value) {
+          workplaceInput.value = converted;
+          workplaceInput.setSelectionRange(pos, pos);
+        }
+      });
 
       // --- THANH TRẠNG THÁI (thay cho alert()) ---
       const statusEl = document.getElementById("status");

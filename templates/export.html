@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Tải dữ liệu khách hàng</title>
+
+    <style>
+      :root {
+        --ink: #0f2436;
+        --ink-muted: #56708a;
+        --surface: #eef7fc;
+        --surface-2: #d2e8f7;
+        --sky: #0b7fc9;
+        --sky-deep: #085d94;
+        --line: #d9ecf8;
+        --alert: #c23b4f;
+        --alert-soft: #fbe3e7;
+        --cta-bg: #0f2436;
+        --cta-text: #ffffff;
+        --body-bg:
+          linear-gradient(to right, #74b5e2 0%, rgba(116, 181, 226, 0) 45%),
+          linear-gradient(to left, #74b5e2 0%, rgba(116, 181, 226, 0) 45%),
+          #d5e9f7;
+        --shadow: 0 1px 2px rgba(15, 36, 54, 0.05), 0 16px 40px rgba(15, 36, 54, 0.07);
+      }
+      :root[data-theme="dark"] {
+        --ink: #eaf3fb;
+        --ink-muted: #8fa8bd;
+        --surface: #122130;
+        --surface-2: #16283a;
+        --sky: #4fb1ef;
+        --sky-deep: #7cc8f5;
+        --line: #1f3547;
+        --cta-bg: #4fb1ef;
+        --cta-text: #062434;
+        --alert: #e2707f;
+        --alert-soft: #351f26;
+        --body-bg: linear-gradient(180deg, #0a1620 0%, #0d1d29 55%);
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.45);
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; height: 100%; }
+      body {
+        background: var(--body-bg);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 1.25rem;
+      }
+      .card {
+        width: 100%;
+        max-width: 360px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 1.8rem;
+      }
+      h1 { font-size: 1.15rem; margin: 0 0 0.5rem; }
+      p.lede { color: var(--ink-muted); font-size: 0.86rem; margin: 0 0 1.3rem; }
+      .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.3rem; }
+      .field label {
+        font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+        font-weight: 700; color: var(--sky-deep);
+      }
+      .field input {
+        border: 1px solid var(--line); border-radius: 12px; padding: 0.65rem 0.8rem;
+        font-size: 0.94rem; color: var(--ink); background: var(--surface-2);
+        outline: none; transition: border-color 0.15s ease;
+      }
+      .field input:focus { border-color: var(--sky); }
+      .error {
+        background: var(--alert-soft); color: var(--alert);
+        border-radius: 12px; padding: 0.65rem 0.85rem; font-size: 0.82rem; margin-bottom: 1.1rem;
+      }
+      .btn {
+        appearance: none; border: none; border-radius: 999px; width: 100%;
+        font-size: 0.88rem; font-weight: 600; cursor: pointer; padding: 0.85rem 1.2rem;
+        background: var(--cta-bg); color: var(--cta-text);
+      }
+      .btn:hover { filter: brightness(0.92); }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Tải dữ liệu khách hàng</h1>
+      <p class="lede">Xuất danh sách khách hàng cá nhân ra file Excel. Nhập mật khẩu quản trị để tiếp tục.</p>
+      {% if error %}<div class="error">{{ error }}</div>{% endif %}
+      <form method="POST">
+        <div class="field">
+          <label for="password">Mật khẩu</label>
+          <input type="password" name="password" id="password" autofocus required />
+        </div>
+        <button type="submit" class="btn">Tải xuống Excel</button>
+      </form>
+    </div>
+  </body>
+</html>

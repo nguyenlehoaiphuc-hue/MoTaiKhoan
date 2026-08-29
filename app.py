@@ -1,9 +1,14 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from gemini_service import extract_cccd, extract_hkd, extract_company
 from supabase import create_client
 import os
 import json
 import re
+import io
+import secrets
+from datetime import datetime
+from openpyxl import Workbook
+from openpyxl.styles import Font
 from email_service import send_email
 from docx_service import export_docx
 from zip_service import build_zip
@@ -16,8 +21,8 @@ supabase = create_client(
 )
 
 CUSTOMER_FIELDS = [
-    "fullName", "dob", "idCard", "issueDate", "issuePlace",
-    "expiryDate", "address", "phone", "email",
+    "workplace", "fullName", "dob", "idCard", "issueDate", "issuePlace",
+    "expiryDate", "address", "phone", "customerEmail", "email",
 ]
 
 # Chuyển field CCCD (fullName, dob, ...) sang field kế toán (accName, accDob, ...)
@@ -126,8 +131,10 @@ def build_email_content(mode, data):
         name = data.get("fullName")
         subject = f"Mẫu mở tài khoản KH {name}"
 
+    workplace = data.get("workplace") or "(không có)"
     body_gdv = f"""Kính gửi: Anh/Chị,
 KH {name} đã có form mở tài khoản.
+Nơi làm việc: {workplace}
 Vui lòng kiểm tra thông tin trước khi cho KH ký.
 P/s: Đây là email tự động. Vui lòng không trả lời.
 Trân trọng,
@@ -245,6 +252,67 @@ Lời nhắn: {message or "(không có)"}
         print(e)
 
     return jsonify({"success": True})
+
+
+CUSTOMER_FIELD_LABELS = {
+    "workplace": "Nơi làm việc",
+    "fullName": "Họ và tên",
+    "dob": "Ngày sinh",
+    "idCard": "Số CCCD",
+    "issueDate": "Ngày cấp",
+    "issuePlace": "Nơi cấp",
+    "expiryDate": "Ngày hết hạn",
+    "address": "Địa chỉ",
+    "phone": "Số điện thoại",
+    "customerEmail": "Email khách hàng",
+    "email": "Email nhận hồ sơ",
+    "created_at": "Thời gian tạo",
+}
+
+
+def build_customer_excel():
+    """Xuất toàn bộ bảng customer (KH cá nhân) ra file Excel trong bộ nhớ."""
+    rows = supabase.table("customer").select("*").execute().data or []
+
+    columns = list(CUSTOMER_FIELDS)
+    if rows and "created_at" in rows[0]:
+        columns.append("created_at")
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Khach hang ca nhan"
+    ws.append([CUSTOMER_FIELD_LABELS.get(c, c) for c in columns])
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+    for row in rows:
+        ws.append([row.get(c, "") for c in columns])
+    for col_cells in ws.columns:
+        width = max((len(str(c.value or "")) for c in col_cells), default=10) + 2
+        ws.column_dimensions[col_cells[0].column_letter].width = min(width, 40)
+
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+
+@app.route("/export", methods=["GET", "POST"])
+def export_customers():
+    error = None
+    if request.method == "POST":
+        password = request.form.get("password", "")
+        admin_password = os.getenv("ADMIN_PASSWORD", "")
+        if admin_password and secrets.compare_digest(password, admin_password):
+            buffer = build_customer_excel()
+            filename = f"khach_hang_ca_nhan_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+            return send_file(
+                buffer,
+                mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                as_attachment=True,
+                download_name=filename,
+            )
+        error = "Mật khẩu không đúng."
+    return render_template("export.html", error=error)
 
 
 if __name__ == "__main__":
